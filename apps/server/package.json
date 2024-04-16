@@ -1,0 +1,40 @@
+{
+  "name": "server",
+  "version": "0.1.0",
+  "private": true,
+  "scripts": {
+    "dev": "next dev",
+    "build": "next build",
+    "start": "next start",
+    "lint": "next lint"
+  },
+  "dependencies": {
+    "@frames.js/render": "^0.1.2",
+    "@noble/ed25519": "^2.0.0",
+    "@rainbow-me/rainbowkit": "^2.0.5",
+    "@tanstack/react-query": "^5.29.0",
+    "@uidotdev/usehooks": "^2.4.1",
+    "@xframes/ui": "workspace:*",
+    "frames.js": "^0.12.1",
+    "next": "14.1.4",
+    "react": "^18.2.0",
+    "react-dom": "^18.2.0",
+    "viem": "^2.9.15",
+    "wagmi": "^2.5.19"
+  },
+  "devDependencies": {
+    "@frames.js/debugger": "^0.1.16",
+    "@types/node": "^20",
+    "@types/react": "^18",
+    "@types/react-dom": "^18",
+    "@xframes/eslint-config": "workspace:*",
+    "@xframes/tailwind-config": "workspace:*",
+    "@xframes/typescript-config": "workspace:*",
+    "autoprefixer": "^10.0.1",
+    "eslint": "^8",
+    "eslint-config-next": "14.1.4",
+    "postcss": "^8",
+    "tailwindcss": "^3.4.3",
+    "typescript": "^5.4.4"
+  }
+}
