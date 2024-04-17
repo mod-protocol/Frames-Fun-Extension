@@ -1,5 +1,7 @@
 import type { PlasmoMessaging } from "@plasmohq/messaging"
 
+import { framesProxyUrl } from "~constants"
+
 export interface FetchFrameRequestParams {
   postType?: string
 }
@@ -12,12 +14,6 @@ const defaultHeaders = {
   "User-Agent": "fetch"
 }
 
-const proxyUrl =
-  process.env.PLASMO_PUBLIC_FRAMES_PROXY_URL ||
-  // "https://i.frames.fun/embed/frames"
-  "http://localhost:3000/embed/frames"
-// "https://debugger.framesjs.org/frames"
-
 const handler: PlasmoMessaging.MessageHandler = async (req, res) => {
   const { url, options, params } = req.body as {
     url: string
@@ -26,7 +22,7 @@ const handler: PlasmoMessaging.MessageHandler = async (req, res) => {
   }
 
   try {
-    const targetUrl = new URL(proxyUrl)
+    const targetUrl = new URL(framesProxyUrl)
     if (options?.method === "POST") {
       targetUrl.searchParams.set("postType", params?.postType || "post")
       targetUrl.searchParams.set("postUrl", url)

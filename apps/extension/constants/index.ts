@@ -1,9 +1,8 @@
-export const LOCAL_STORAGE_KEYS = {
-  FARCASTER_USER: "farcasterUser"
-}
-export const fallbackFrameContext = {
-  castId: {
-    fid: 1,
-    hash: "0x0000000000000000000000000000000000000000" as const
-  }
-}
+export const baseProxyUrl =
+  process.env.PLASMO_PUBLIC_PROXY_URL || "http://localhost:3000"
+export const signerProxyUrl =
+  process.env.PLASMO_PUBLIC_SIGNER_PROXY_URL || `${baseProxyUrl}/api/v1/signer`
+export const framesProxyUrl =
+  process.env.PLASMO_PUBLIC_FRAMES_PROXY_URL || `${baseProxyUrl}/api/v1/frames`
+export const frameEmbedProxyUrl =
+  process.env.PLASMO_FRAME_EMBED_PROXY_URL || `${baseProxyUrl}/embed`

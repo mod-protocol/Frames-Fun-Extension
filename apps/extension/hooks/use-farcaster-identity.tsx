@@ -1,9 +1,9 @@
 import { useEffect, useState } from "react"
 
-import { sendToBackground } from "@plasmohq/messaging"
-
-// TODO
+import { signerProxyUrl } from "~constants"
+// TODO - extract to a common lib
 import { convertKeypairToHex, createKeypair } from "~utils/crypto"
+import { fetchJson } from "~utils/fetch-json"
 
 import { useSignerStorage } from "./use-signer-storage"
 
@@ -42,29 +42,19 @@ interface SignedKeyRequest {
   signerUserMetadata?: object
 }
 
+interface SignedKeyRequestResponse {
+  result: { signedKeyRequest: SignedKeyRequest }
+}
+
 async function fetchSignedKeyRequest(token: string) {
-  const { json, error } = await sendToBackground({
-    name: "fetch",
-    body: {
-      url: `https://api.warpcast.com/v2/signed-key-request?token=${token}`,
-      options: {
-        method: "GET",
-        headers: {
-          "Content-Type": "application/json"
-        }
-      }
-    }
-  })
-  if (error) {
-    throw new Error(error)
-  }
-  const responseBody = json as {
-    result: { signedKeyRequest: SignedKeyRequest }
-  }
-  if (responseBody.result.signedKeyRequest.state !== "completed") {
+  const url = "https://api.warpcast.com/v2/signed-key-request?token=" + token
+  const { result } = await fetchJson<SignedKeyRequestResponse>(url).then(
+    (res) => res.json()
+  )
+  if (result.signedKeyRequest.state !== "completed") {
     throw new Error("hasnt succeeded yet")
   }
-  return responseBody.result
+  return result
 }
 
 interface SignedKeyRequestBody {
@@ -75,46 +65,26 @@ interface SignedKeyRequestBody {
 }
 
 async function fetchCreateSignedKeyRequest(requestBody: SignedKeyRequestBody) {
-  const { json, error } = await sendToBackground({
-    name: "fetch",
-    body: {
-      url: "https://api.warpcast.com/v2/signed-key-requests",
-      options: {
-        method: "POST",
-        headers: {
-          "Content-Type": "application/json"
-        },
-        body: JSON.stringify(requestBody)
-      }
-    }
-  })
-  if (error) {
-    throw new Error(error)
-  }
-  return json.result
+  const url = "https://api.warpcast.com/v2/signed-key-requests"
+  const { result } = await fetchJson<SignedKeyRequestResponse>(url, {
+    method: "POST",
+    body: JSON.stringify(requestBody)
+  }).then((res) => res.json())
+  return result
+}
+
+interface SignerResponse {
+  signature: string
+  requestFid: string
+  deadline: number
+  requestSigner: string
 }
 
 async function fetchCreateSignature(publicKey: string) {
-  const { json, error } = await sendToBackground({
-    name: "fetch",
-    body: {
-      url: "https://i.frames.fun/embed/signer",
-      options: {
-        method: "POST",
-        body: JSON.stringify({ publicKey })
-      }
-    }
-  })
-  if (error) {
-    throw new Error(error)
-  }
-  const authorizationBody: {
-    signature: string
-    requestFid: string
-    deadline: number
-    requestSigner: string
-  } = json
-  return authorizationBody
+  return fetchJson<SignerResponse>(signerProxyUrl, {
+    method: "POST",
+    body: JSON.stringify({ publicKey })
+  }).then((res) => res.json())
 }
 
 interface Options {

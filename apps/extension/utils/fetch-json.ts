@@ -11,7 +11,17 @@ export const fetchJson = async <T>(
 ): Promise<JsonExtractor<T>> => {
   const { error, json, status } = await sendToBackground({
     name: "fetch",
-    body: { url, options }
+    body: {
+      url,
+      options: {
+        method: "GET",
+        ...options,
+        headers: {
+          "Content-Type": "application/json",
+          ...options.headers
+        }
+      }
+    }
   })
   if (error) {
     throw new Error(error)

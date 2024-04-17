@@ -148,7 +148,7 @@ export function FrameUI({ frameState, FrameImage, onReset }: FrameUIProps) {
             onChange={(e) => frameState.setInputText(e.target.value)}
           />
         )}
-        <div className="flex flex-row gap-2">
+        <div className="flex flex-row gap-2 flex-wrap">
           {frameState.frame.buttons?.map(
             (frameButton: FrameButton, index: number) => (
               <FrameButtonComponent

@@ -1,36 +1,16 @@
 import { useMeasure } from "@uidotdev/usehooks"
 import { useCallback, useEffect, useRef, useState } from "react"
 
+import { frameEmbedProxyUrl } from "~constants"
 import { useFarcasterIdentity } from "~hooks/use-farcaster-identity"
+
+import { LoadingIndicator } from "./loading-indicator"
 
 type FrameIFrameProps = {
   url: string
   frameId: string
   theme: "dark" | "light"
 }
-
-const iFrameServiceUrl =
-  process.env.PLASMO_PUBLIC_IFRAME_SERVICE_URL || "http://localhost:3000"
-
-const renderLoadingIndicator = () => (
-  <svg
-    className="animate-spin h-5 w-5"
-    xmlns="http://www.w3.org/2000/svg"
-    fill="none"
-    viewBox="0 0 24 24">
-    <circle
-      className="opacity-25"
-      cx="12"
-      cy="12"
-      r="10"
-      stroke="currentColor"
-      strokeWidth="4"></circle>
-    <path
-      className="opacity-75"
-      fill="currentColor"
-      d="M4 12a8 8 0 018-8V0C5.373 0 0 5.373 0 12h4zm2 5.291A7.962 7.962 0 014 12H0c0 3.042 1.135 5.824 3 7.938l3-2.647z"></path>
-  </svg>
-)
 
 export default function FrameIFrame({ url, frameId, theme }: FrameIFrameProps) {
   const { signer, onSignerlessFramePress, logout } = useFarcasterIdentity()
@@ -40,7 +20,7 @@ export default function FrameIFrame({ url, frameId, theme }: FrameIFrameProps) {
   const [error, setError] = useState(false)
   const [aspectRatio, setAspectRatio] = useState(0)
 
-  const iFrameUrl = new URL(iFrameServiceUrl)
+  const iFrameUrl = new URL(frameEmbedProxyUrl)
   iFrameUrl.searchParams.append("url", url)
   iFrameUrl.searchParams.append("theme", theme)
   iFrameUrl.searchParams.append("frameId", frameId)
@@ -121,7 +101,7 @@ export default function FrameIFrame({ url, frameId, theme }: FrameIFrameProps) {
         ) : (
           loading && (
             <div className="flex gap-3 items-center">
-              {renderLoadingIndicator()}
+              <LoadingIndicator />
             </div>
           )
         )}

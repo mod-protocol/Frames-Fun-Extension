@@ -59,7 +59,7 @@ function FrameComponent({
   const url = state.homeframeUrl;
 
   return (
-    <div ref={ref} className="flex flex-col bg-white/20 dark:bg-black/80">
+    <div ref={ref} className="flex flex-col dark:bg-white/20 rounded-md">
       <FrameUI
         frameState={state}
         FrameImage={FrameImageNext}
@@ -134,8 +134,8 @@ function FrameRenderWithRemoteIdentity({
   const frameState = useFrame<FarcasterSigner | null, FrameActionBodyPayload>({
     homeframeUrl: url,
     frameContext,
-    frameGetProxy: "/embed/frames",
-    frameActionProxy: "/embed/frames",
+    frameGetProxy: "/api/v1/frames",
+    frameActionProxy: "/api/v1/frames",
     signerState,
     onTransaction,
     onMint,
@@ -160,8 +160,8 @@ function FrameRenderWithLocalIdentity({
   const frameState = useFrame<FarcasterSigner | null, FrameActionBodyPayload>({
     homeframeUrl: url,
     frameContext,
-    frameGetProxy: "/embed/frames",
-    frameActionProxy: "/embed/frames",
+    frameGetProxy: "/api/v1/frames",
+    frameActionProxy: "/api/v1/frames",
     signerState,
     onTransaction,
     onMint,
