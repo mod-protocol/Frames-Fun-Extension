@@ -5,9 +5,9 @@ export async function generateMetadata(): Promise<Metadata> {
   return {
     title: "New api example",
     description: "This is a new api example",
-    other: {
-      ...(await fetchMetadata(new URL("/tx/frames", "http://localhost:3000"))),
-    },
+    // other: {
+    //   ...(await fetchMetadata(new URL("/tx/frames", "http://localhost:3000"))),
+    // },
   };
 }
 
