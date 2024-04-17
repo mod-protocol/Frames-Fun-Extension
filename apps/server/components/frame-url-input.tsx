@@ -29,10 +29,7 @@ export const FrameUrlInput = () => {
   };
 
   return (
-    <div
-      className="w-full max-w-[640px] m-auto"
-      style={{ paddingTop: url ? "0rem" : "20rem" }}
-    >
+    <div className="w-full">
       <form
         className="flex w-full rounded-full shadow-lg shadow-gray-200 dark:shadow-black/20"
         onSubmit={handleSubmit}
