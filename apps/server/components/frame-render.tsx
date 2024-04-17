@@ -109,7 +109,7 @@ function FrameRenderComponent({
       {signerState?.signer?.status === "pending_approval" &&
         signerState?.signer?.signerApprovalUrl && (
           <div className="absolute top-0 left-0 bottom-0 right-0 flex items-center justify-center">
-            <div className="max-w-72 bg-white/75 px-4 py-6 rounded border border-violet-950/10 backdrop-blur-sm">
+            <div className="max-w-72 bg-white px-4 py-6 rounded-md shadow-xl backdrop-blur-sm">
               <FarcasterAuthUI authState={signerState} />
             </div>
           </div>

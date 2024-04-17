@@ -26,31 +26,33 @@ export const FarcasterAuthUI = ({ authState }: FarcasterAuthUIProps) => {
   }
   return (
     <div className="w-full flex flex-col gap-4 text-center">
-      <div className="flex flex-row w-full gap-3 justify-between items-center">
+      <div className="flex flex-row w-full gap-3 justify-between items-start">
         <div className="text-violet-950 text-lg font-bold">
           Login with Farcaster to interact
         </div>
-        <button
-          className="text-violet-950/50 hover:text-violet-950/40 active:text-violet-950/25 transition ease-in-out duration-150"
-          onClick={() => authState.logout?.()}
-        >
-          <svg
-            className="w-6 h-6"
-            viewBox="0 0 24 24"
-            fill="none"
-            xmlns="http://www.w3.org/2000/svg"
+        <div className="py-1">
+          <button
+            className="text-violet-950/50 hover:text-violet-950/40 active:text-violet-950/25 transition ease-in-out duration-150"
+            onClick={() => authState.logout?.()}
           >
-            <g>
-              <path
-                d="M18 18L12 12M12 12L6 6M12 12L18 6M12 12L6 18"
-                stroke="currentColor"
-                strokeWidth="2"
-                strokeLinecap="round"
-                strokeLinejoin="round"
-              />
-            </g>
-          </svg>
-        </button>
+            <svg
+              className="w-6 h-6"
+              viewBox="0 0 24 24"
+              fill="none"
+              xmlns="http://www.w3.org/2000/svg"
+            >
+              <g>
+                <path
+                  d="M18 18L12 12M12 12L6 6M12 12L18 6M12 12L6 18"
+                  stroke="currentColor"
+                  strokeWidth="2"
+                  strokeLinecap="round"
+                  strokeLinejoin="round"
+                />
+              </g>
+            </svg>
+          </button>
+        </div>
       </div>
       <div className="flex flex-col gap-3 w-full">
         <div>
