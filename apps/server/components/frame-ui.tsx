@@ -146,6 +146,14 @@ export function FrameUI({ frameState, FrameImage, onReset }: FrameUIProps) {
             type="text"
             placeholder={frameState.frame.inputText}
             onChange={(e) => frameState.setInputText(e.target.value)}
+            onKeyUp={(e) => {
+              if (
+                e.key === "Enter" &&
+                frameState.frame?.buttons?.length === 1
+              ) {
+                frameState.onButtonPress(frameState.frame.buttons[0], 0);
+              }
+            }}
           />
         )}
         <div className="flex flex-row gap-2 flex-wrap">

@@ -9,6 +9,7 @@ export default async function Home({
   searchParams: Record<string, string | string[] | undefined>;
 }) {
   const url = searchParams.url as string | undefined;
+  const refreshKey = searchParams.r as string | undefined;
 
   const darkMode =
     typeof window !== "undefined" &&
@@ -24,7 +25,7 @@ export default async function Home({
         >
           <FrameUrlInput />
           {url && (
-            <div className="pt-8 w-full">
+            <div key={refreshKey || "x"} className="pt-8 w-full">
               <div className="rounded-md dark:bg-black">
                 <Providers theme={theme}>
                   <FrameRender url={url} frameContext={fallbackFrameContext} />

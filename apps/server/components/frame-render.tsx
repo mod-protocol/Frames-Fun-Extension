@@ -60,11 +60,7 @@ function FrameComponent({
 
   return (
     <div ref={ref} className="flex flex-col dark:bg-white/20 rounded-md">
-      <FrameUI
-        frameState={state}
-        FrameImage={FrameImageNext}
-        onReset={handleReset}
-      />
+      <FrameUI frameState={state} onReset={handleReset} />
       <div className="flex gap-2 p-2">
         <div className="flex flex-row flex-1 flex-wrap gap-x-4 items-center justify-between p-2 text-sm text-gray-500 dark:text-gray-300">
           {url && (
@@ -236,7 +232,7 @@ export default function FrameRender(props: FrameRenderProps) {
         taker: account.address,
       });
 
-      fetch(`/mint?${searchParams.toString()}`)
+      fetch(`/api/v1/mint?${searchParams.toString()}`)
         .then(async (res) => {
           if (!res.ok) {
             const json = await res.json();

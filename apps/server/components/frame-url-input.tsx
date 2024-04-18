@@ -7,8 +7,8 @@ export const FrameUrlInput = () => {
   const searchParams = useSearchParams();
   const router = useRouter();
 
-  const url = searchParams.get("url");
-  const [inputValue, setInputValue] = useState(url ?? "");
+  const currentUrl = searchParams.get("url");
+  const [inputValue, setInputValue] = useState(currentUrl ?? "");
 
   const handleSubmit = (e: React.FormEvent<HTMLFormElement>) => {
     e.preventDefault();
@@ -19,7 +19,9 @@ export const FrameUrlInput = () => {
     try {
       if (url) {
         new URL(url);
-        router.replace(`/?url=${encodeURIComponent(url)}`);
+        router.replace(
+          `/?url=${encodeURIComponent(url)}&r=${Math.random().toString(36).substring(2)}`
+        );
       } else {
         router.replace("/");
       }

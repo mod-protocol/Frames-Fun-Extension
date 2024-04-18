@@ -96,6 +96,9 @@ importers:
       '@rainbow-me/rainbowkit':
         specifier: ^2.0.5
         version: 2.0.5(@types/react@18.2.75)(react-dom@18.2.0)(react@18.2.0)(viem@2.9.16)(wagmi@2.5.19)
+      '@reservoir0x/reservoir-sdk':
+        specifier: ^2.0.14
+        version: 2.0.14(viem@2.9.16)
       '@tanstack/react-query':
         specifier: ^5.29.0
         version: 5.29.2(react@18.2.0)
@@ -106,8 +109,8 @@ importers:
         specifier: workspace:*
         version: link:../../packages/ui
       frames.js:
-        specifier: ^0.12.1
-        version: 0.12.1(@cloudflare/workers-types@4.20240405.0)(@types/express@4.17.21)(@xmtp/frames-validator@0.5.2)(@xmtp/proto@3.45.0)(next@14.1.4)(react-dom@18.2.0)(react@18.2.0)(typescript@5.4.5)
+        specifier: ^0.13.2
+        version: 0.13.2(@cloudflare/workers-types@4.20240405.0)(@types/express@4.17.21)(@xmtp/frames-validator@0.5.2)(@xmtp/proto@3.45.0)(next@14.1.4)(react-dom@18.2.0)(react@18.2.0)(typescript@5.4.5)
       next:
         specifier: 14.1.4
         version: 14.1.4(@babel/core@7.24.4)(react-dom@18.2.0)(react@18.2.0)
@@ -1603,7 +1606,7 @@ packages:
       babel-plugin-polyfill-corejs2: 0.4.10(@babel/core@7.24.4)
       babel-plugin-polyfill-corejs3: 0.10.4(@babel/core@7.24.4)
       babel-plugin-polyfill-regenerator: 0.6.1(@babel/core@7.24.4)
-      core-js-compat: 3.36.1
+      core-js-compat: 3.37.0
       semver: 6.3.1
     transitivePeerDependencies:
       - supports-color
@@ -2175,7 +2178,7 @@ packages:
       viem: ^2.7.8
     dependencies:
       '@farcaster/core': 0.14.8(typescript@5.4.5)
-      frames.js: 0.12.1(@cloudflare/workers-types@4.20240405.0)(@types/express@4.17.21)(@xmtp/frames-validator@0.5.2)(@xmtp/proto@3.45.0)(next@14.1.4)(react-dom@18.2.0)(react@18.2.0)(typescript@5.4.5)
+      frames.js: 0.12.2(@cloudflare/workers-types@4.20240405.0)(@types/express@4.17.21)(@xmtp/frames-validator@0.5.2)(@xmtp/proto@3.45.0)(next@14.1.4)(react-dom@18.2.0)(react@18.2.0)(typescript@5.4.5)
       next: 14.1.4(@babel/core@7.24.4)(react-dom@18.2.0)(react@18.2.0)
       react: 18.2.0
       react-dom: 18.2.0(react@18.2.0)
@@ -5079,6 +5082,17 @@ packages:
       react-native: 0.73.6(@babel/core@7.24.4)(@babel/preset-env@7.24.4)(encoding@0.1.13)(react@18.2.0)
     dev: false
 
+  /@reservoir0x/reservoir-sdk@2.0.14(viem@2.9.16):
+    resolution: {integrity: sha512-zRu3MblSMwrmuWHIfcEPT/Ds8uwoiA3WyJ12XY+77VE5sxy4ix7s14ciHaKSiG3GPv+sEM/EJotl4tTj7cjInA==}
+    peerDependencies:
+      viem: ~2.7.8
+    dependencies:
+      axios: 1.6.8
+      viem: 2.9.16(typescript@5.4.5)
+    transitivePeerDependencies:
+      - debug
+    dev: false
+
   /@resvg/resvg-wasm@2.4.0:
     resolution: {integrity: sha512-C7c51Nn4yTxXFKvgh2txJFNweaVcfUPQxwEUFw4aWsCmfiBDJsTSwviIF8EcwjQ6k8bPyMWCl1vw4BdxE569Cg==}
     engines: {node: '>= 10'}
@@ -5839,7 +5853,7 @@ packages:
     resolution: {integrity: sha512-bGyep3JqPCRry1wq+O5n7oiBgGWmeIJXPjXXCo8EK0u8duZGSYar7cGqd3ML2JUsLGeB7fmc06KYo9fLGWqPvQ==}
     dependencies:
       '@types/node': 20.12.7
-      '@types/qs': 6.9.14
+      '@types/qs': 6.9.15
       '@types/range-parser': 1.2.7
       '@types/send': 0.17.4
     dev: false
@@ -5849,7 +5863,7 @@ packages:
     dependencies:
       '@types/body-parser': 1.19.5
       '@types/express-serve-static-core': 4.19.0
-      '@types/qs': 6.9.14
+      '@types/qs': 6.9.15
       '@types/serve-static': 1.15.7
     dev: false
 
@@ -5943,8 +5957,8 @@ packages:
   /@types/prop-types@15.7.12:
     resolution: {integrity: sha512-5zvhXYtRNRluoE/jAp4GVsSduVUzNWKkOZrCDBWYtE7biZywwdC2AcEzg+cSMLFRfVgeAFqpfNabiPjxFddV1Q==}
 
-  /@types/qs@6.9.14:
-    resolution: {integrity: sha512-5khscbd3SwWMhFqylJBLQ0zIu7c1K6Vz0uBIt915BI3zV0q1nfjRQD3RqSBcPaO6PHEF4ov/t9y89fSiyThlPA==}
+  /@types/qs@6.9.15:
+    resolution: {integrity: sha512-uXHQKES6DQKKCLh441Xv/dwxOq1TVS3JPUMlEqoEglvlhR6Mxnlew/Xq/LRVHpLyk7iK3zODe1qYHIMltO7XGg==}
     dev: false
 
   /@types/range-parser@1.2.7:
@@ -7007,7 +7021,7 @@ packages:
       '@noble/curves': 1.4.0
       '@noble/hashes': 1.4.0
       '@xmtp/proto': 3.45.0
-      viem: 2.9.16(typescript@5.4.5)
+      viem: 2.9.21(typescript@5.4.5)
     transitivePeerDependencies:
       - bufferutil
       - typescript
@@ -7340,6 +7354,10 @@ packages:
       tslib: 2.6.2
     dev: false
 
+  /asynckit@0.4.0:
+    resolution: {integrity: sha512-Oei9OH4tRh0YqU3GxhX79dM/mwVgvbZJaSNaRk+bshkj0S5cfHcgYakreBjrHwatXKbz+IoIdYLxrKim2MjW0Q==}
+    dev: false
+
   /atomic-sleep@1.0.0:
     resolution: {integrity: sha512-kNOjDqAh7px0XWNI+4QbzoiR/nTkHAWNud2uvnJquD1/x5a7EQZMJT0AczqK0Qn67oY/TTQ1LbUKajZpp3I9tQ==}
     engines: {node: '>=8.0.0'}
@@ -7370,6 +7388,16 @@ packages:
     resolution: {integrity: sha512-M0JtH+hlOL5pLQwHOLNYZaXuhqmvS8oExsqB1SBYgA4Dk7u/xx+YdGHXaK5pyUfed5mYXdlYiphWq3G8cRi5JQ==}
     engines: {node: '>=4'}
     dev: true
+
+  /axios@1.6.8:
+    resolution: {integrity: sha512-v/ZHtJDU39mDpyBoFVkETcd/uNdxrWRrg3bKpOKzXFA6Bvqopts6ALSMU3y6ijYxbw2B+wPrIv46egTzJXCLGQ==}
+    dependencies:
+      follow-redirects: 1.15.6
+      form-data: 4.0.0
+      proxy-from-env: 1.1.0
+    transitivePeerDependencies:
+      - debug
+    dev: false
 
   /axobject-query@3.2.1:
     resolution: {integrity: sha512-jsyHu61e6N4Vbz/v18DHwWYKK0bSWLqn47eeDSKPB7m8tqMHF9YJ+mhIk2lVteyZrY8tnSj/jHOv4YiTCuCJgg==}
@@ -7417,7 +7445,7 @@ packages:
     dependencies:
       '@babel/core': 7.24.4
       '@babel/helper-define-polyfill-provider': 0.6.1(@babel/core@7.24.4)
-      core-js-compat: 3.36.1
+      core-js-compat: 3.37.0
     transitivePeerDependencies:
       - supports-color
     dev: false
@@ -8013,6 +8041,13 @@ packages:
     resolution: {integrity: sha512-IfEDxwoWIjkeXL1eXcDiow4UbKjhLdq6/EuSVR9GMN7KVH3r9gQ83e73hsz1Nd1T3ijd5xv1wcWRYO+D6kCI2w==}
     dev: true
 
+  /combined-stream@1.0.8:
+    resolution: {integrity: sha512-FQN4MRfuJeHf7cBbBMJFXhKSDq+2kAArBlmRBvcvFE5BB1HZKXtSFASDhdlz9zOYwxh8lDdnvmMOe/+5cdoEdg==}
+    engines: {node: '>= 0.8'}
+    dependencies:
+      delayed-stream: 1.0.0
+    dev: false
+
   /command-exists@1.2.9:
     resolution: {integrity: sha512-LTQ/SGc+s0Xc0Fu5WaKnR0YiygZkm9eKFvyS+fRsU7/ZWFF8ykFM6Pc9aCVf1+xasOOZpO3BAVgVrKvsqKHV7w==}
     dev: false
@@ -8122,8 +8157,8 @@ packages:
       is-what: 3.14.1
     dev: false
 
-  /core-js-compat@3.36.1:
-    resolution: {integrity: sha512-Dk997v9ZCt3X/npqzyGdTlq6t7lDBhZwGvV94PKzDArjp7BTRm7WlDAXYd/OWdeFHO8OChQYRJNJvUCqCbrtKA==}
+  /core-js-compat@3.37.0:
+    resolution: {integrity: sha512-vYq4L+T8aS5UuFg4UwDhc7YNRWVeVZwltad9C/jV3R2LgVOpS9BDr7l/WL6BN0dbV3k1XejPTHqqEzJgsa0frA==}
     dependencies:
       browserslist: 4.23.0
     dev: false
@@ -8495,6 +8530,11 @@ packages:
       rimraf: 3.0.2
       slash: 3.0.0
     dev: true
+
+  /delayed-stream@1.0.0:
+    resolution: {integrity: sha512-ZySD7Nf91aLB0RxL4KGrKHBXl7Eds1DAmEdcoVawXnLD7SDhpNgtuII2aAkg7a7QS41jxPSZ17p4VdGnMHk3MQ==}
+    engines: {node: '>=0.4.0'}
+    dev: false
 
   /denodeify@1.2.1:
     resolution: {integrity: sha512-KNTihKNmQENUZeKu5fzfpzRqR5S2VMp4gl9RFHiWzj9DfvYQPMJ6XHKNaQxaGCXwPk6y9yme3aUoaiAe+KX+vg==}
@@ -9840,6 +9880,16 @@ packages:
     engines: {node: '>=0.4.0'}
     dev: false
 
+  /follow-redirects@1.15.6:
+    resolution: {integrity: sha512-wWN62YITEaOpSK584EZXJafH1AGpO8RVgElfkuXbTOrPX4fIfOyEpW/CsiNd8JdYrAoOvafRTOEnvsO++qCqFA==}
+    engines: {node: '>=4.0'}
+    peerDependencies:
+      debug: '*'
+    peerDependenciesMeta:
+      debug:
+        optional: true
+    dev: false
+
   /for-each@0.3.3:
     resolution: {integrity: sha512-jqYfLp7mo9vIyQf8ykW2v7A+2N4QjeCeI5+Dz9XraiO1ign81wjiH7Fb9vSOWvQfNtmSa4H2RoQTrrXivdUZmw==}
     dependencies:
@@ -9857,12 +9907,50 @@ packages:
     engines: {node: '>= 14.17'}
     dev: false
 
+  /form-data@4.0.0:
+    resolution: {integrity: sha512-ETEklSGi5t0QMZuiXoA/Q6vcnxcLQP5vdugSpuAyi6SVGi2clPPp+xgEhuMaHC+zGgn31Kd235W35f7Hykkaww==}
+    engines: {node: '>= 6'}
+    dependencies:
+      asynckit: 0.4.0
+      combined-stream: 1.0.8
+      mime-types: 2.1.35
+    dev: false
+
   /fraction.js@4.3.7:
     resolution: {integrity: sha512-ZsDfxO51wGAXREY55a7la9LScWpwv9RxIrYABrlvOFBlH/ShPnrtsXeuUIfXKKOVicNxQ+o8JTbJvjS4M89yew==}
     dev: true
 
-  /frames.js@0.12.1(@cloudflare/workers-types@4.20240405.0)(@types/express@4.17.21)(@xmtp/frames-validator@0.5.2)(@xmtp/proto@3.45.0)(next@14.1.4)(react-dom@18.2.0)(react@18.2.0)(typescript@5.4.5):
-    resolution: {integrity: sha512-AXJ2MlnBrlKdFQ5GOdOCHNd7oSLZdAApRIU6JNoGpN0qrQdVggegKAdl8M8A11MPAQSy9jMXFnmsPVcv+Py6Ew==}
+  /frames.js@0.12.2(@cloudflare/workers-types@4.20240405.0)(@types/express@4.17.21)(@xmtp/frames-validator@0.5.2)(@xmtp/proto@3.45.0)(next@14.1.4)(react-dom@18.2.0)(react@18.2.0)(typescript@5.4.5):
+    resolution: {integrity: sha512-D71JM52xp/AIvbu2p1py2T1+ACTew4vt9WtwZ64eDlmCXhC+LxNAzGWDpC9VbR76t2mtczcdn/TXR7FpANEvMQ==}
+    peerDependencies:
+      '@cloudflare/workers-types': ^4.20240320.1
+      '@types/express': ^4.17.21
+      '@xmtp/frames-validator': ^0.5.2
+      '@xmtp/proto': 3.45.0
+      next: ^14.1.0
+      react: ^18.2.0
+      react-dom: ^18.2.0
+    dependencies:
+      '@cloudflare/workers-types': 4.20240405.0
+      '@types/express': 4.17.21
+      '@vercel/og': 0.6.2
+      '@xmtp/frames-validator': 0.5.2(typescript@5.4.5)
+      '@xmtp/proto': 3.45.0
+      cheerio: 1.0.0-rc.12
+      next: 14.1.4(@babel/core@7.24.4)(react-dom@18.2.0)(react@18.2.0)
+      protobufjs: 7.2.6
+      react: 18.2.0
+      react-dom: 18.2.0(react@18.2.0)
+      viem: 2.9.16(typescript@5.4.5)
+    transitivePeerDependencies:
+      - bufferutil
+      - typescript
+      - utf-8-validate
+      - zod
+    dev: false
+
+  /frames.js@0.13.2(@cloudflare/workers-types@4.20240405.0)(@types/express@4.17.21)(@xmtp/frames-validator@0.5.2)(@xmtp/proto@3.45.0)(next@14.1.4)(react-dom@18.2.0)(react@18.2.0)(typescript@5.4.5):
+    resolution: {integrity: sha512-pDofWf4X4ZfEzKz0aASRaNBxDoLvmx69ktOmnXds0GCoQd2KMR4tORcP++gdDFSIps+IDWZLdIeir+8DcRamXw==}
     peerDependencies:
       '@cloudflare/workers-types': ^4.20240320.1
       '@types/express': ^4.17.21
@@ -13466,7 +13554,6 @@ packages:
 
   /proxy-from-env@1.1.0:
     resolution: {integrity: sha512-D+zkORCbA9f1tdWRK0RaCR3GPv50cMxcrz4X8k5LTSUD1Dkw47mKJEZQNunItRTkWwgtaUSo1RVFRIG9ZXiFYg==}
-    dev: true
 
   /prr@1.0.1:
     resolution: {integrity: sha512-yPw4Sng1gWghHQWj0B3ZggWUm4qVbPwPFcRG8KyxiU7J2OHFSoEHKS+EZ3fv5l1t9CyCiop6l/ZYeWbrgoQejw==}
@@ -15742,6 +15829,29 @@ packages:
 
   /viem@2.9.16(typescript@5.4.5):
     resolution: {integrity: sha512-FQRfN4G7uKEUs5DYvVrH/kZmTkwcSDpTBxnadpwG1EEP8nHm57WDpSaGN7PwSPVgJ6rMo5MENT5hgnqaNTlb2w==}
+    peerDependencies:
+      typescript: '>=5.0.4'
+    peerDependenciesMeta:
+      typescript:
+        optional: true
+    dependencies:
+      '@adraffy/ens-normalize': 1.10.0
+      '@noble/curves': 1.2.0
+      '@noble/hashes': 1.3.2
+      '@scure/bip32': 1.3.2
+      '@scure/bip39': 1.2.1
+      abitype: 1.0.0(typescript@5.4.5)
+      isows: 1.0.3(ws@8.13.0)
+      typescript: 5.4.5
+      ws: 8.13.0
+    transitivePeerDependencies:
+      - bufferutil
+      - utf-8-validate
+      - zod
+    dev: false
+
+  /viem@2.9.21(typescript@5.4.5):
+    resolution: {integrity: sha512-8GtxPjPGpiN5cmr19zSX9mb1LX/eON3MPxxAd3QmyUFn69Rp566zlREOqE7zM35y5yX59fXwnz6O3X7e9+C9zg==}
     peerDependencies:
       typescript: '>=5.0.4'
     peerDependenciesMeta:
