@@ -16,5 +16,10 @@
   "packageManager": "pnpm@8.9.0",
   "engines": {
     "node": ">=18"
+  },
+  "pnpm": {
+    "overrides": {
+      "neverthrow": "6.1.0"
+    }
   }
 }

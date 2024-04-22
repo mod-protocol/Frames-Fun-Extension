@@ -1,3 +1,5 @@
+"use client";
+
 import FrameRender from "@/components/frame-render";
 import { fallbackFrameContext } from "@frames.js/render";
 import { Providers } from "./providers";

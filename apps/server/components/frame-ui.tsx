@@ -1,5 +1,5 @@
 import { FrameState } from "@frames.js/render";
-import { FrameButton } from "frames.js";
+import { Frame, FrameButton } from "frames.js";
 import React, { ImgHTMLAttributes, useState } from "react";
 
 export type FrameUIProps = {
@@ -107,74 +107,75 @@ export function FrameUI({ frameState, FrameImage, onReset }: FrameUIProps) {
   const errorFrameProps = {
     onReset,
   };
-  if (!frameState.homeframeUrl) {
+  const prevFrame = frameState.framesStack?.[1];
+  const currentFrame = frameState.frame;
+  const frameResult =
+    currentFrame?.status === "done" ? currentFrame.frame : null;
+  const prevFrameResult = prevFrame?.status === "done" ? prevFrame.frame : null;
+  const isLoading = currentFrame?.status === "pending" || !frameResult;
+  const frame = (
+    frameResult
+      ? frameResult.frame
+      : prevFrameResult
+        ? prevFrameResult.frame
+        : null
+  ) as Frame | null;
+  if (!currentFrame) {
+    return null;
+  } else if (!frameState.homeframeUrl) {
     return <FrameUIError {...errorFrameProps}>Missing frame url</FrameUIError>;
-  } else if (frameState.error) {
+  } else if (currentFrame.status === "requestError") {
     return (
       <FrameUIError {...errorFrameProps}>Failed to load Frame</FrameUIError>
     );
-  } else if (
-    frameState.homeframeUrl &&
-    !frameState.frame &&
-    !frameState.isLoading
-  ) {
-    return (
-      <FrameUIError {...errorFrameProps}>Failed to load Frame</FrameUIError>
-    );
-  } else if (!frameState.frame) {
-    if (frameState.isLoading) {
-      return <FrameUIError>Loading...</FrameUIError>;
-    }
-    return <FrameUIError {...errorFrameProps}>Frame not present</FrameUIError>;
-  } else if (!frameState.isFrameValid) {
+  } else if (frameResult && frameResult.status === "failure") {
     return <FrameUIError {...errorFrameProps}>Invalid frame</FrameUIError>;
+  } else if (!frame) {
+    return <FrameUIError>Loading...</FrameUIError>;
   }
 
   return (
     <FrameContainerComponent>
       <FrameImageComponent
-        src={frameState.frame.image}
-        aspectRatio={frameState.frame.imageAspectRatio ?? "1.91:1"}
-        frameLoading={!!frameState.isLoading}
+        src={frame.image}
+        aspectRatio={frame.imageAspectRatio ?? "1.91:1"}
+        frameLoading={!!isLoading}
         FrameImage={FrameImage}
       />
       <div className="flex flex-col w-full gap-2 p-2 border-t border-gray-200 dark:border-white/10">
-        {frameState.frame.inputText && (
+        {frame.inputText && (
           <input
             className="p-1.5 border box-border rounded border-gray-200 dark:border-white/15 dark:bg-white/5 dark:text-gray-200"
             value={frameState.inputText}
             type="text"
-            placeholder={frameState.frame.inputText}
+            placeholder={frame.inputText}
             onChange={(e) => frameState.setInputText(e.target.value)}
             onKeyUp={(e) => {
-              if (
-                e.key === "Enter" &&
-                frameState.frame?.buttons?.length === 1
-              ) {
-                frameState.onButtonPress(frameState.frame.buttons[0], 0);
+              if (e.key === "Enter" && frame.buttons?.length === 1) {
+                frameState.onButtonPress(frame, frame.buttons[0], 0);
               }
             }}
           />
         )}
         <div className="flex flex-row gap-2 flex-wrap">
-          {frameState.frame.buttons?.map(
-            (frameButton: FrameButton, index: number) => (
-              <FrameButtonComponent
-                type="button"
-                disabled={!!frameState.isLoading}
-                onClick={() => frameState.onButtonPress(frameButton, index)}
-                key={index}
-              >
-                {frameButton.action === "mint" ? `⬗ ` : ""}
-                {frameButton.label}
-                {frameButton.action === "tx" ? <TxIcon /> : ""}
-                {frameButton.action === "post_redirect" ||
-                frameButton.action === "link"
-                  ? ` ↗`
-                  : ""}
-              </FrameButtonComponent>
-            )
-          )}
+          {frame.buttons?.map((frameButton: FrameButton, index: number) => (
+            <FrameButtonComponent
+              type="button"
+              disabled={!!isLoading}
+              onClick={() =>
+                frameState.onButtonPress(frame, frameButton, index)
+              }
+              key={index}
+            >
+              {frameButton.action === "mint" ? `⬗ ` : ""}
+              {frameButton.label}
+              {frameButton.action === "tx" ? <TxIcon /> : ""}
+              {frameButton.action === "post_redirect" ||
+              frameButton.action === "link"
+                ? ` ↗`
+                : ""}
+            </FrameButtonComponent>
+          ))}
         </div>
       </div>
     </FrameContainerComponent>

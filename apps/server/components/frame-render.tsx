@@ -4,17 +4,17 @@ import { Frame } from "frames.js";
 import { FarcasterAuthUI } from "@xframes/ui/farcaster-auth-ui";
 import { useFarcasterIdentity } from "../hooks/use-farcaster-identity";
 import {
+  FarcasterFrameContext,
   FarcasterSigner,
   FarcasterSignerState,
   FrameActionBodyPayload,
-  FrameContext,
   FrameState,
   OnMintArgs,
   OnTransactionArgs,
   OnTransactionFunc,
 } from "@frames.js/render";
 import { useFrame } from "@frames.js/render/use-frame";
-import { FrameImageNext } from "@frames.js/render/next";
+// import { FrameImageNext } from "@frames.js/render/next";
 import { useMeasure } from "@uidotdev/usehooks";
 import { useCallback, useEffect } from "react";
 import { useAccount, useChainId, useConfig } from "wagmi";
@@ -24,6 +24,7 @@ import { sendTransaction, switchChain } from "wagmi/actions";
 import { useFarcasterIdentityRemote } from "@/hooks/use-farcaster-identity-remote";
 
 import { FrameUI } from "./frame-ui";
+import { Toast, useToast } from "./toast";
 
 type FrameRenderProps = {
   frameId?: string;
@@ -31,7 +32,7 @@ type FrameRenderProps = {
   frame?: Frame;
   theme?: "light" | "dark";
   dangerousSkipSigning?: boolean;
-  frameContext: FrameContext;
+  frameContext: FarcasterFrameContext;
 };
 
 function FrameComponent({
@@ -57,6 +58,8 @@ function FrameComponent({
   };
 
   const url = state.homeframeUrl;
+  const frameResult = state.frame?.status === "done" ? state.frame.frame : null;
+  const buttons = frameResult?.frame.buttons;
 
   return (
     <div ref={ref} className="flex flex-col dark:bg-white/20 rounded-md">
@@ -76,9 +79,7 @@ function FrameComponent({
           )}
           <div className="text-xs opacity-75">Powered by x.frames</div>
         </div>
-        {state.frame?.buttons?.some(
-          (b) => b.action === "tx" || b.action === "mint"
-        ) && (
+        {buttons?.some((b) => b.action === "tx" || b.action === "mint") && (
           <div className="flex justify-end px-4 py-2 border-l border-gray-200 dark:border-black">
             <ConnectButton />
           </div>
@@ -115,26 +116,27 @@ function FrameRenderComponent({
 }
 
 interface FrameRenderWithIdentityProps extends FrameRenderProps {
+  connectedAddress: `0x${string}` | undefined;
   onTransaction: OnTransactionFunc;
   onMint: (t: OnMintArgs) => void;
 }
 
+const useFrameDefaults = {
+  frameGetProxy: "/api/v1/frames",
+  frameActionProxy: "/api/v1/frames",
+  specification: "farcaster" as const,
+};
+
 function FrameRenderWithRemoteIdentity({
-  url,
-  frameContext,
   frameId,
-  onTransaction,
-  onMint,
+  ...props
 }: FrameRenderWithIdentityProps) {
   const signerState = useFarcasterIdentityRemote({ frameId: frameId! });
   const frameState = useFrame<FarcasterSigner | null, FrameActionBodyPayload>({
-    homeframeUrl: url,
-    frameContext,
-    frameGetProxy: "/api/v1/frames",
-    frameActionProxy: "/api/v1/frames",
+    ...useFrameDefaults,
+    ...props,
+    homeframeUrl: props.url,
     signerState,
-    onTransaction,
-    onMint,
   });
   return (
     <FrameRenderComponent
@@ -145,29 +147,16 @@ function FrameRenderWithRemoteIdentity({
   );
 }
 
-function FrameRenderWithLocalIdentity({
-  url,
-  frameContext,
-  frameId,
-  onTransaction,
-  onMint,
-}: FrameRenderWithIdentityProps) {
+function FrameRenderWithLocalIdentity(props: FrameRenderWithIdentityProps) {
   const signerState = useFarcasterIdentity();
   const frameState = useFrame<FarcasterSigner | null, FrameActionBodyPayload>({
-    homeframeUrl: url,
-    frameContext,
-    frameGetProxy: "/api/v1/frames",
-    frameActionProxy: "/api/v1/frames",
+    ...useFrameDefaults,
+    ...props,
+    homeframeUrl: props.url,
     signerState,
-    onTransaction,
-    onMint,
   });
   return (
-    <FrameRenderComponent
-      frameState={frameState}
-      signerState={signerState}
-      frameId={frameId}
-    />
+    <FrameRenderComponent frameState={frameState} signerState={signerState} />
   );
 }
 
@@ -176,12 +165,13 @@ export default function FrameRender(props: FrameRenderProps) {
   const config = useConfig();
   const account = useAccount();
   const { openConnectModal } = useConnectModal();
+  const [toast, setToast] = useToast();
 
   const onTransaction = useCallback(
     async ({ transactionData }: OnTransactionArgs) => {
       const { params, chainId, method } = transactionData;
       if (!chainId.startsWith("eip155:")) {
-        alert(`debugger: Unrecognized chainId ${chainId}`);
+        alert(`Unrecognized chainId ${chainId}`);
         return null;
       }
 
@@ -193,23 +183,27 @@ export default function FrameRender(props: FrameRenderProps) {
       const requestedChainId = parseInt(chainId.split("eip155:")[1]!);
 
       if (currentChainId !== requestedChainId) {
-        console.log("switching chain");
+        setToast("Switching chain");
         await switchChain(config, {
           chainId: requestedChainId,
         });
       }
 
       try {
-        // Send the transaction
-        console.log("sending tx");
-        const transactionId = await sendTransaction(config, {
+        const transactionParams = {
           to: params.to,
           data: params.data,
-          value: BigInt(params.value),
-        });
+          value: params.value ? BigInt(params.value) : undefined,
+        };
+        console.debug("sending transaction", transactionParams);
+        setToast("Continue in your wallet to complete the transaction");
+        const transactionId = await sendTransaction(config, transactionParams);
+        setToast("Transaction sent", "success");
         return transactionId;
       } catch (error) {
         console.error(error);
+        const e = error as any;
+        setToast(e.details || e.shortMessage || e.message, "error");
         return null;
       }
     },
@@ -255,10 +249,19 @@ export default function FrameRender(props: FrameRenderProps) {
     ...props,
     onTransaction,
     onMint,
+    connectedAddress: account.address,
   };
 
-  if (props.frameId) {
-    return <FrameRenderWithRemoteIdentity {...componentProps} />;
-  }
-  return <FrameRenderWithLocalIdentity {...componentProps} />;
+  const Component = props.frameId
+    ? FrameRenderWithRemoteIdentity
+    : FrameRenderWithLocalIdentity;
+
+  return (
+    <div className="relative">
+      <Component {...componentProps} />
+      <div className="absolute bottom-0 left-0 right-0 flex items-center justify-center">
+        <Toast toast={toast} />
+      </div>
+    </div>
+  );
 }
