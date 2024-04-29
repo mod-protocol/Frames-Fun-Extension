@@ -159,7 +159,7 @@ export function useFarcasterIdentity(): FarcasterSignerState {
       });
       const authorizationBody: {
         signature: string;
-        requestFid: string;
+        requestFid: number;
         deadline: number;
         requestSigner: string;
       } = await authorizationResponse.json();
@@ -206,7 +206,7 @@ export function useFarcasterIdentity(): FarcasterSignerState {
 
   return {
     signer: farcasterUser,
-    hasSigner: !!farcasterUser?.fid && !!farcasterUser.privateKey,
+    hasSigner: !!farcasterUser?.privateKey,
     signFrameAction: async (x) => {
       const { body, searchParams } = (await signFrameAction(x)) as {
         body: FrameActionBodyPayload;

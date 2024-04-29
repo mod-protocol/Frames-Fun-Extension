@@ -19,8 +19,6 @@ const handler: PlasmoMessaging.MessageHandler = async (req, res) => {
       })
     }
   }
-  //
-  console.log("fetch", req.body.url, req.body.options)
   try {
     const resp = await fetch(req.body.url, req.body.options)
     if (!resp.ok) {

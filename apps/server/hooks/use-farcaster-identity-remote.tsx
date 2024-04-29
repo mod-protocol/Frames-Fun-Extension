@@ -91,7 +91,7 @@ export function useFarcasterIdentityRemote({
 
   return {
     signer: farcasterUser,
-    hasSigner: !!farcasterUser?.fid && !!farcasterUser.privateKey,
+    hasSigner: !!farcasterUser?.privateKey,
     signFrameAction: async (x) => {
       const { body, searchParams } = (await signFrameAction(x)) as {
         body: FrameActionBodyPayload;
