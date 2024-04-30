@@ -1,29 +1,35 @@
-This is a [Plasmo extension](https://docs.plasmo.com/) project bootstrapped with [`plasmo init`](https://www.npmjs.com/package/plasmo).
+# x.frames extension
+
+This is a [Plasmo extension](https://docs.plasmo.com/) project for the x.frames browser extension.
 
 ## Getting Started
 
-First, run the development server:
+First, create your own `.env` file in the `apps/extension` directory (you can use the `.env.sample` file included for inspiration), you should set the following environment variables:
+
+- `PLASMO_PUBLIC_PROXY_URL` - points to the frames server, if you're running it locally chances are you don't need to set it - unless it runs on a different port than `3000`
+
+If you're running your own server(s), you can set environment variables for specific APIs/endpoints:
+
+- `PLASMO_PUBLIC_SIGNER_PROXY_URL` - signer API endpoint - defaults to `${PLASMO_PUBLIC_PROXY_URL}/api/v1/signer`
+- `PLASMO_PUBLIC_FRAMES_PROXY_URL` - frames API endpoint - defaults to `${PLASMO_PUBLIC_PROXY_URL}/api/v1/frames`
+- `PLASMO_FRAME_EMBED_PROXY_URL` - embed endpoint - defaults to `${PLASMO_PUBLIC_PROXY_URL}/embed`
+
+Then you can run the extension dev server from the monorepo root directory:
 
 ```bash
-pnpm dev
-# or
-npm run dev
+pnpm dev --filter=extension
 ```
 
-Open your browser and load the appropriate development build. For example, if you are developing for the chrome browser, using manifest v3, use: `build/chrome-mv3-dev`.
-
-You can start editing the popup by modifying `popup.tsx`. It should auto-update as you make changes. To add an options page, simply add a `options.tsx` file to the root of the project, with a react component default exported. Likewise to add a content page, add a `content.ts` file to the root of the project, importing some module and do some logic, then reload the extension on your browser.
+Open your browser and load the appropriate development build. You can find it it `/apps/extension/build/chrome-mv3-dev`.
 
 For further guidance, [visit our Documentation](https://docs.plasmo.com/)
 
 ## Making production build
 
-Run the following:
+Run the following in the monorepo root:
 
 ```bash
-pnpm build
-# or
-npm run build
+pnpm build --filter extension
 ```
 
 This should create a production bundle for your extension, ready to be zipped and published to the stores.
