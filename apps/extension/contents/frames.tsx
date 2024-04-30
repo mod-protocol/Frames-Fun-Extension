@@ -146,7 +146,8 @@ export const render: PlasmoRender<any> = async (
   )
 
   const frameModel = await fetchFrameModel(frameUrl)
-  if (!frameModel?.frame) {
+  const isValidFrame = frameModel?.frame && frameModel.status === "success"
+  if (!isValidFrame) {
     return
   }
   const frameId = Math.random().toString(36).substring(2)
