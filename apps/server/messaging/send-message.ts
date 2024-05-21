@@ -15,7 +15,7 @@ export function createMessageConsumer<T>(
   const handler = (e: MessageEvent) => {
     const { data: message } = e;
     if (message.type === type) {
-      console.info("Received message", message);
+      // console.info("Received message", message);
       callback(message);
     }
   };

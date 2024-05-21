@@ -56,10 +56,10 @@ export default function FrameIFrame({ url, frameId, theme }: FrameIFrameProps) {
     // signer === null - not loaded yet
     // signer === undefined - loaded and "empty"
     if (signer === undefined) {
-      console.info("Sending logout message to iframe", iframe)
+      // console.info("Sending logout message to iframe", iframe)
       iframe.postMessage({ type: "SIGNER_LOGGED_OUT" }, "*")
     } else if (signer?.status === "approved") {
-      console.info("Sending login message to iframe", iframe)
+      // console.info("Sending login message to iframe", iframe)
       iframe.postMessage({ type: "SIGNER_LOGGED_IN", data: signer }, "*")
     }
   }, [signer, iframeRef])

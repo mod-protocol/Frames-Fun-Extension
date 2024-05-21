@@ -25,7 +25,7 @@ const SIGNED_KEY_REQUEST_TYPE = [
 
 const SIGNATURE_VALIDITY = 86400; // 1 day
 
-export async function POST(req: NextRequest) {
+async function handleRequest(req: NextRequest) {
   try {
     const { publicKey } = await req.json();
 
@@ -59,3 +59,6 @@ export async function POST(req: NextRequest) {
     return NextResponse.error();
   }
 }
+
+export const POST = handleRequest;
+export const GET = handleRequest;
