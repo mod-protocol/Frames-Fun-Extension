@@ -102,6 +102,10 @@ function TxIcon() {
   );
 }
 
+function isPartial(frame: Frame): boolean {
+  return frame?.image || frame?.buttons;
+}
+
 /** A UI component only, that should be easy for any app to integrate */
 export function FrameUI({ frameState, FrameImage, onReset }: FrameUIProps) {
   const errorFrameProps = {
@@ -128,7 +132,11 @@ export function FrameUI({ frameState, FrameImage, onReset }: FrameUIProps) {
     return (
       <FrameUIError {...errorFrameProps}>Failed to load Frame</FrameUIError>
     );
-  } else if (frameResult && frameResult.status === "failure") {
+  } else if (
+    frameResult &&
+    frameResult.status === "failure" &&
+    !isPartial(frameResult.frame)
+  ) {
     return <FrameUIError {...errorFrameProps}>Invalid frame</FrameUIError>;
   } else if (!frame) {
     return <FrameUIError>Loading...</FrameUIError>;
