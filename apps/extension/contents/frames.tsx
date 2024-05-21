@@ -116,12 +116,14 @@ export const render: PlasmoRender<any> = async (
   const cardWrapperParent = anchorElement.closest(
     "[data-testid='card.wrapper']"
   )?.parentElement
+  let isCardWrapper = false
   if (cardWrapperParent) {
     const containerElement = cardWrapperParent
     while (cardWrapperParent.firstChild) {
       cardWrapperParent.firstChild.remove()
     }
     anchor.element = containerElement
+    isCardWrapper = true
   } else if (anchorElement.parentElement) {
     anchor.element = anchorElement.parentElement
   }
@@ -147,7 +149,7 @@ export const render: PlasmoRender<any> = async (
 
   const frameModel = await fetchFrameModel(frameUrl)
   const isValidFrame = frameModel?.frame && frameModel.status === "success"
-  if (!isValidFrame) {
+  if (!isValidFrame && !isCardWrapper) {
     return
   }
   const frameId = Math.random().toString(36).substring(2)

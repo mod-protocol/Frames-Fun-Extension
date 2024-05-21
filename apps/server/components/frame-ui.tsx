@@ -10,6 +10,7 @@ export type FrameUIProps = {
 
 interface FrameImageComponentProps {
   src: string;
+  frameUrl: string;
   frameLoading: boolean;
   aspectRatio: "1:1" | "1.91:1";
   FrameImage?: React.FC<ImgHTMLAttributes<HTMLImageElement> & { src: string }>;
@@ -17,6 +18,7 @@ interface FrameImageComponentProps {
 
 function FrameImageComponent({
   src,
+  frameUrl,
   aspectRatio,
   frameLoading,
   FrameImage,
@@ -25,19 +27,21 @@ function FrameImageComponent({
 
   const ImageEl = FrameImage ? FrameImage : "img";
   return (
-    <ImageEl
-      src={src}
-      alt="Frame image"
-      className="w-full rounded-t-md"
-      width={"100%"}
-      onLoad={() => setLoadedSrc(src)}
-      onError={() => setLoadedSrc(src)}
-      style={{
-        filter: frameLoading || src !== loadedSrc ? "blur(4px)" : undefined,
-        objectFit: "cover",
-        aspectRatio: (aspectRatio ?? "1.91:1") === "1:1" ? "1/1" : "1.91/1",
-      }}
-    />
+    <a href={frameUrl} target="_blank" rel="noopener noreferrer nofollow">
+      <ImageEl
+        src={src}
+        alt="Frame image"
+        className="w-full rounded-t-md"
+        width={"100%"}
+        onLoad={() => setLoadedSrc(src)}
+        onError={() => setLoadedSrc(src)}
+        style={{
+          filter: frameLoading || src !== loadedSrc ? "blur(4px)" : undefined,
+          objectFit: "cover",
+          aspectRatio: (aspectRatio ?? "1.91:1") === "1:1" ? "1/1" : "1.91/1",
+        }}
+      />
+    </a>
   );
 }
 
@@ -102,8 +106,8 @@ function TxIcon() {
   );
 }
 
-function isPartial(frame: Frame): boolean {
-  return frame?.image || frame?.buttons;
+function isPartial(frame: Partial<Frame>): boolean {
+  return !!(frame?.image || frame?.ogImage || frame?.buttons);
 }
 
 /** A UI component only, that should be easy for any app to integrate */
@@ -145,47 +149,50 @@ export function FrameUI({ frameState, FrameImage, onReset }: FrameUIProps) {
   return (
     <FrameContainerComponent>
       <FrameImageComponent
-        src={frame.image}
+        frameUrl={currentFrame.url}
+        src={frame.image || frame.ogImage || ""}
         aspectRatio={frame.imageAspectRatio ?? "1.91:1"}
         frameLoading={!!isLoading}
         FrameImage={FrameImage}
       />
-      <div className="flex flex-col w-full gap-2 p-2 border-t border-gray-200 dark:border-white/10">
-        {frame.inputText && (
-          <input
-            className="p-1.5 border box-border rounded border-gray-200 dark:border-white/15 dark:bg-white/5 dark:text-gray-200"
-            value={frameState.inputText}
-            type="text"
-            placeholder={frame.inputText}
-            onChange={(e) => frameState.setInputText(e.target.value)}
-            onKeyUp={(e) => {
-              if (e.key === "Enter" && frame.buttons?.length === 1) {
-                frameState.onButtonPress(frame, frame.buttons[0], 0);
-              }
-            }}
-          />
-        )}
-        <div className="flex flex-row gap-2 flex-wrap">
-          {frame.buttons?.map((frameButton: FrameButton, index: number) => (
-            <FrameButtonComponent
-              type="button"
-              disabled={!!isLoading}
-              onClick={() =>
-                frameState.onButtonPress(frame, frameButton, index)
-              }
-              key={index}
-            >
-              {frameButton.action === "mint" ? `⬗ ` : ""}
-              {frameButton.label}
-              {frameButton.action === "tx" ? <TxIcon /> : ""}
-              {frameButton.action === "post_redirect" ||
-              frameButton.action === "link"
-                ? ` ↗`
-                : ""}
-            </FrameButtonComponent>
-          ))}
+      {(frame.inputText || frame.buttons) && (
+        <div className="flex flex-col w-full gap-2 p-2 border-t border-gray-200 dark:border-white/10">
+          {frame.inputText && (
+            <input
+              className="p-1.5 border box-border rounded border-gray-200 dark:border-white/15 dark:bg-white/5 dark:text-gray-200"
+              value={frameState.inputText}
+              type="text"
+              placeholder={frame.inputText}
+              onChange={(e) => frameState.setInputText(e.target.value)}
+              onKeyUp={(e) => {
+                if (e.key === "Enter" && frame.buttons?.length === 1) {
+                  frameState.onButtonPress(frame, frame.buttons[0], 0);
+                }
+              }}
+            />
+          )}
+          <div className="flex flex-row gap-2 flex-wrap">
+            {frame.buttons?.map((frameButton: FrameButton, index: number) => (
+              <FrameButtonComponent
+                type="button"
+                disabled={!!isLoading}
+                onClick={() =>
+                  frameState.onButtonPress(frame, frameButton, index)
+                }
+                key={index}
+              >
+                {frameButton.action === "mint" ? `⬗ ` : ""}
+                {frameButton.label}
+                {frameButton.action === "tx" ? <TxIcon /> : ""}
+                {frameButton.action === "post_redirect" ||
+                frameButton.action === "link"
+                  ? ` ↗`
+                  : ""}
+              </FrameButtonComponent>
+            ))}
+          </div>
         </div>
-      </div>
+      )}
     </FrameContainerComponent>
   );
 }
