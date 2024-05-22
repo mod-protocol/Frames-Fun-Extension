@@ -99,6 +99,27 @@ const fetchFrameModel = async (url: string) => {
   }
 }
 
+const clearWrapperParent = (el: Element) => {
+  const containerElement = el
+  while (el.firstChild) {
+    el.firstChild.remove()
+  }
+  return containerElement
+}
+
+const getAnchorElement = (el: Element) => {
+  const cardWrapperParent = el.closest(
+    "[data-testid='card.wrapper']"
+  )?.parentElement
+  if (cardWrapperParent) {
+    return clearWrapperParent(cardWrapperParent)
+  }
+  if (el.parentElement) {
+    return el.parentElement
+  }
+  return null
+}
+
 export const render: PlasmoRender<any> = async (
   { anchor, createRootContainer },
   InlineCSUIContainer
@@ -113,20 +134,6 @@ export const render: PlasmoRender<any> = async (
 
   const anchorElement = anchor.element
   anchorElement.setAttribute("data-x-frames-processed", "true")
-  const cardWrapperParent = anchorElement.closest(
-    "[data-testid='card.wrapper']"
-  )?.parentElement
-  let isCardWrapper = false
-  if (cardWrapperParent) {
-    const containerElement = cardWrapperParent
-    while (cardWrapperParent.firstChild) {
-      cardWrapperParent.firstChild.remove()
-    }
-    anchor.element = containerElement
-    isCardWrapper = true
-  } else if (anchorElement.parentElement) {
-    anchor.element = anchorElement.parentElement
-  }
   const url = anchorElement.getAttribute("href")
   if (!url) {
     return
@@ -136,10 +143,16 @@ export const render: PlasmoRender<any> = async (
   if (!frameUrl) {
     return
   }
+  const cardWrapperParent = anchorElement.closest(
+    "[data-testid='card.wrapper']"
+  )?.parentElement
   const tweetParentFrameUrls = (
     tweetParent.getAttribute("data-x-frames-urls") || ""
   ).split(",")
   if (tweetParentFrameUrls.includes(frameUrl)) {
+    if (cardWrapperParent) {
+      clearWrapperParent(cardWrapperParent)
+    }
     return
   }
   tweetParent.setAttribute(
@@ -149,9 +162,15 @@ export const render: PlasmoRender<any> = async (
 
   const frameModel = await fetchFrameModel(frameUrl)
   const isValidFrame = frameModel?.frame && frameModel.status === "success"
-  if (!isValidFrame && !isCardWrapper) {
+  if (!isValidFrame) {
     return
   }
+
+  const newAnchorElement = getAnchorElement(anchorElement)
+  if (newAnchorElement) {
+    anchor.element = newAnchorElement
+  }
+
   const frameId = Math.random().toString(36).substring(2)
   const rootContainer = await createRootContainer(anchor)
   const root = createRoot(rootContainer)

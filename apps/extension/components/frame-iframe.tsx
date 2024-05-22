@@ -102,6 +102,7 @@ export default function FrameIFrame({ url, frameId, theme }: FrameIFrameProps) {
           loading && (
             <div className="flex gap-3 items-center">
               <LoadingIndicator />
+              <div>{new URL(url).origin}</div>
             </div>
           )
         )}
