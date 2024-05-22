@@ -64,7 +64,12 @@ function FrameComponent({
   return (
     <div ref={ref} className="flex flex-col dark:bg-white/20 rounded-md">
       <FrameUI frameState={state} onReset={handleReset} />
-      <div className="flex gap-2 p-2">
+      {buttons?.some((b) => b.action === "tx" || b.action === "mint") && (
+        <div className="flex justify-end p-4 border-b border-gray-200 dark:border-black">
+          <ConnectButton />
+        </div>
+      )}
+      <div className="flex flex-col gap-2 p-2">
         <div className="flex flex-row flex-1 flex-wrap gap-x-4 items-center justify-between p-2 text-sm text-gray-500 dark:text-gray-300">
           {url && (
             <a
@@ -79,11 +84,6 @@ function FrameComponent({
           )}
           <div className="text-xs opacity-75">Powered by x.frames</div>
         </div>
-        {buttons?.some((b) => b.action === "tx" || b.action === "mint") && (
-          <div className="flex justify-end px-4 py-2 border-l border-gray-200 dark:border-black">
-            <ConnectButton />
-          </div>
-        )}
       </div>
     </div>
   );

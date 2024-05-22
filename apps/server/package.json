@@ -3,25 +3,25 @@
   "version": "0.1.0",
   "private": true,
   "scripts": {
-    "dev": "next dev",
+    "dev": "rimraf .next && next dev",
     "build": "next build",
     "start": "next start",
     "lint": "next lint"
   },
   "dependencies": {
-    "@frames.js/render": "^0.2.3",
+    "@frames.js/render": "^0.2.7",
     "@noble/ed25519": "^2.0.0",
-    "@rainbow-me/rainbowkit": "^2.0.5",
-    "@reservoir0x/reservoir-sdk": "^2.0.14",
-    "@tanstack/react-query": "^5.29.0",
+    "@rainbow-me/rainbowkit": "^2.1.0",
+    "@reservoir0x/reservoir-sdk": "^2.2.3",
+    "@tanstack/react-query": "^5.37.1",
     "@uidotdev/usehooks": "^2.4.1",
     "@xframes/ui": "workspace:*",
-    "frames.js": "^0.15.0",
+    "frames.js": "^0.16.0",
     "next": "14.1.4",
     "react": "^18.2.0",
     "react-dom": "^18.2.0",
     "viem": "^2.9.15",
-    "wagmi": "^2.5.19"
+    "wagmi": "^2.9.4"
   },
   "devDependencies": {
     "@frames.js/debugger": "^0.2.3",
@@ -37,6 +37,7 @@
     "eslint-config-next": "14.1.4",
     "pino-pretty": "^11.0.0",
     "postcss": "^8",
+    "rimraf": "^5.0.7",
     "tailwindcss": "^3.4.3",
     "typescript": "^5.4.4"
   }

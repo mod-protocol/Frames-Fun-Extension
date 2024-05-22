@@ -42,6 +42,7 @@ export const FrameUrlInput = () => {
           type="text"
           value={inputValue}
           onChange={(e) => setInputValue(e.target.value)}
+          autoFocus
         />
         <button
           className="bg-black/80 hover:bg-black/90 active:bg-black dark:bg-white/15 dark:hover:bg-white/10 dark:active:bg-white/5 text-white rounded-r-full pl-6 pr-8 py-4 font-bold transition duration-150 ease-in-out"

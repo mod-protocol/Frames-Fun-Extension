@@ -15,7 +15,7 @@
     "@plasmohq/storage": "^1.9.3",
     "@uidotdev/usehooks": "^2.4.1",
     "cheerio": "1.0.0-rc.12",
-    "plasmo": "0.85.2",
+    "plasmo": "0.86.3",
     "qrcode.react": "^3.1.0",
     "react": "18.2.0",
     "react-dom": "18.2.0"

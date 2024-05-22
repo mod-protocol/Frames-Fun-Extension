@@ -1,6 +1,7 @@
 import { FrameState } from "@frames.js/render";
 import { Frame, FrameButton } from "frames.js";
-import React, { ImgHTMLAttributes, useState } from "react";
+import React, { ImgHTMLAttributes, useEffect, useState } from "react";
+import { MessageSquareIcon, OctagonXIcon, TxIcon } from "./icons";
 
 export type FrameUIProps = {
   frameState: FrameState;
@@ -8,12 +9,44 @@ export type FrameUIProps = {
   onReset?: () => void;
 };
 
+type MessageTooltipProps = {
+  message: string;
+  /**
+   * @defaultValue 'message'
+   */
+  variant?: "message" | "error";
+  /**
+   * @defaultValue false
+   */
+  inline?: boolean;
+};
+
+function MessageTooltip({
+  inline = false,
+  message,
+  variant = "message",
+}: MessageTooltipProps): JSX.Element {
+  return (
+    <div
+      className={`${
+        inline
+          ? ""
+          : "rounded shadow-md border border-gray-200/25 bg-white/75 dark:bg-neutral-700/75 dark:border-white/10"
+      } ${variant === "error" ? "text-red-500" : ""} items-center px-5 py-3 flex gap-3 text-sm`}
+    >
+      {variant === "message" ? <MessageSquareIcon /> : <OctagonXIcon />}
+      {message}
+    </div>
+  );
+}
+
 interface FrameImageComponentProps {
   src: string;
   frameUrl: string;
   frameLoading: boolean;
   aspectRatio: "1:1" | "1.91:1";
   FrameImage?: React.FC<ImgHTMLAttributes<HTMLImageElement> & { src: string }>;
+  message?: string;
 }
 
 function FrameImageComponent({
@@ -22,26 +55,41 @@ function FrameImageComponent({
   aspectRatio,
   frameLoading,
   FrameImage,
+  message,
 }: FrameImageComponentProps) {
   const [loadedSrc, setLoadedSrc] = useState("");
 
   const ImageEl = FrameImage ? FrameImage : "img";
+  const styleAspectRatio =
+    (aspectRatio ?? "1.91:1") === "1:1" ? "1/1" : "1.91/1";
   return (
-    <a href={frameUrl} target="_blank" rel="noopener noreferrer nofollow">
-      <ImageEl
-        src={src}
-        alt="Frame image"
-        className="w-full rounded-t-md"
-        width={"100%"}
-        onLoad={() => setLoadedSrc(src)}
-        onError={() => setLoadedSrc(src)}
-        style={{
-          filter: frameLoading || src !== loadedSrc ? "blur(4px)" : undefined,
-          objectFit: "cover",
-          aspectRatio: (aspectRatio ?? "1.91:1") === "1:1" ? "1/1" : "1.91/1",
-        }}
-      />
-    </a>
+    <div className="relative w-full" style={{ aspectRatio: styleAspectRatio }}>
+      <a
+        href={frameUrl}
+        target="_blank"
+        rel="noopener noreferrer nofollow"
+        className="w-full"
+      >
+        <ImageEl
+          src={src}
+          alt="Frame image"
+          className="w-full rounded-t-md"
+          width={"100%"}
+          onLoad={() => setLoadedSrc(src)}
+          onError={() => setLoadedSrc(src)}
+          style={{
+            filter: frameLoading || src !== loadedSrc ? "blur(4px)" : undefined,
+            objectFit: "cover",
+            aspectRatio: styleAspectRatio,
+          }}
+        />
+      </a>
+      {message && (
+        <div className="absolute inset-x-0 bottom-0 p-2">
+          <MessageTooltip message={message} />
+        </div>
+      )}
+    </div>
   );
 }
 
@@ -62,7 +110,7 @@ function FrameContainerComponent(
 ) {
   return (
     <div
-      className="flex flex-col overflow-hidden items-center justify-center w-full text-gray-700 rounded-md bg-gray-100 border border-gray-200 dark:bg-black dark:border-white/20 dark:text-gray-200"
+      className="flex flex-col overflow-hidden items-center justify-center w-full text-gray-700 rounded-md bg-gray-100 border border-gray-200 dark:bg-black dark:border-white/20 dark:text-gray-200 relative"
       {...props}
     />
   );
@@ -71,38 +119,36 @@ function FrameContainerComponent(
 function FrameUIError({
   children,
   onReset,
+  showButtonThreshold = 0,
 }: {
   children: React.ReactNode;
   onReset?: () => void;
+  showButtonThreshold?: number;
 }) {
+  const [isButtonShown, setIsButtonShown] = useState(false);
+  useEffect(() => {
+    if (showButtonThreshold > 0) {
+      const timeout = setTimeout(() => {
+        setIsButtonShown(true);
+      }, showButtonThreshold);
+      return () => clearTimeout(timeout);
+    } else {
+      setIsButtonShown(true);
+    }
+  }, [setIsButtonShown, showButtonThreshold]);
   return (
     <FrameContainerComponent style={{ aspectRatio: "1.91/1" }}>
       <div className="flex flex-col gap-3 items-center justify-center">
         <div>{children}</div>
         {onReset && (
-          <div>
-            <FrameButtonComponent onClick={onReset}>Reset</FrameButtonComponent>
+          <div className={isButtonShown ? "visible" : "invisible"}>
+            <FrameButtonComponent onClick={onReset} disabled={!isButtonShown}>
+              Reset
+            </FrameButtonComponent>
           </div>
         )}
       </div>
     </FrameContainerComponent>
-  );
-}
-
-function TxIcon() {
-  return (
-    <svg
-      aria-hidden="true"
-      focusable="false"
-      role="img"
-      viewBox="0 0 16 16"
-      className="ml-1 mb-[2px] text-gray-400 inline-block select-none align-text-middle overflow-visible"
-      width="12"
-      height="12"
-      fill="currentColor"
-    >
-      <path d="M9.504.43a1.516 1.516 0 0 1 2.437 1.713L10.415 5.5h2.123c1.57 0 2.346 1.909 1.22 3.004l-7.34 7.142a1.249 1.249 0 0 1-.871.354h-.302a1.25 1.25 0 0 1-1.157-1.723L5.633 10.5H3.462c-1.57 0-2.346-1.909-1.22-3.004L9.503.429Zm1.047 1.074L3.286 8.571A.25.25 0 0 0 3.462 9H6.75a.75.75 0 0 1 .694 1.034l-1.713 4.188 6.982-6.793A.25.25 0 0 0 12.538 7H9.25a.75.75 0 0 1-.683-1.06l2.008-4.418.003-.006a.036.036 0 0 0-.004-.009l-.006-.006-.008-.001c-.003 0-.006.002-.009.004Z"></path>
-    </svg>
   );
 }
 
@@ -115,45 +161,67 @@ export function FrameUI({ frameState, FrameImage, onReset }: FrameUIProps) {
   const errorFrameProps = {
     onReset,
   };
-  const prevFrame = frameState.framesStack?.[1];
+  const prevFrame = frameState.framesStack?.find(
+    (item, idx) => idx > 0 && item.status === "done"
+  );
   const currentFrame = frameState.frame;
   const frameResult =
     currentFrame?.status === "done" ? currentFrame.frame : null;
   const prevFrameResult = prevFrame?.status === "done" ? prevFrame.frame : null;
-  const isLoading = currentFrame?.status === "pending" || !frameResult;
-  const frame = (
-    frameResult
-      ? frameResult.frame
-      : prevFrameResult
-        ? prevFrameResult.frame
-        : null
-  ) as Frame | null;
+  const isLoading = currentFrame?.status === "pending";
+  const frame: Frame | Partial<Frame> | undefined = frameResult
+    ? frameResult.frame
+    : prevFrameResult?.frame;
+  if (!frameState.homeframeUrl) {
+    return <FrameUIError {...errorFrameProps}>Missing frame url</FrameUIError>;
+  }
+
   if (!currentFrame) {
     return null;
-  } else if (!frameState.homeframeUrl) {
-    return <FrameUIError {...errorFrameProps}>Missing frame url</FrameUIError>;
-  } else if (currentFrame.status === "requestError") {
+  }
+  if (currentFrame.status === "requestError") {
     return (
       <FrameUIError {...errorFrameProps}>Failed to load Frame</FrameUIError>
     );
-  } else if (
+  }
+  if (
     frameResult &&
     frameResult.status === "failure" &&
     !isPartial(frameResult.frame)
   ) {
     return <FrameUIError {...errorFrameProps}>Invalid frame</FrameUIError>;
-  } else if (!frame) {
-    return <FrameUIError>Loading...</FrameUIError>;
   }
+
+  if (!frame) {
+    return (
+      <FrameUIError {...errorFrameProps} showButtonThreshold={5000}>
+        Loading...
+      </FrameUIError>
+    );
+  }
+
+  const handleButtonPress = async (index: number) => {
+    if (frame.buttons) {
+      return Promise.resolve(
+        frameState.onButtonPress(frame as Frame, frame.buttons[index]!, index)
+      ).catch((e) => {
+        console.error(e);
+      });
+    }
+    return Promise.resolve();
+  };
 
   return (
     <FrameContainerComponent>
       <FrameImageComponent
-        frameUrl={currentFrame.url}
-        src={frame.image || frame.ogImage || ""}
+        frameUrl={frameState.homeframeUrl}
+        src={frame.image ?? frame.ogImage ?? ""}
         aspectRatio={frame.imageAspectRatio ?? "1.91:1"}
         frameLoading={!!isLoading}
         FrameImage={FrameImage}
+        message={
+          currentFrame.status === "message" ? currentFrame.message : undefined
+        }
       />
       {(frame.inputText || frame.buttons) && (
         <div className="flex flex-col w-full gap-2 p-2 border-t border-gray-200 dark:border-white/10">
@@ -166,7 +234,7 @@ export function FrameUI({ frameState, FrameImage, onReset }: FrameUIProps) {
               onChange={(e) => frameState.setInputText(e.target.value)}
               onKeyUp={(e) => {
                 if (e.key === "Enter" && frame.buttons?.length === 1) {
-                  frameState.onButtonPress(frame, frame.buttons[0], 0);
+                  handleButtonPress(0);
                 }
               }}
             />
@@ -176,9 +244,7 @@ export function FrameUI({ frameState, FrameImage, onReset }: FrameUIProps) {
               <FrameButtonComponent
                 type="button"
                 disabled={!!isLoading}
-                onClick={() =>
-                  frameState.onButtonPress(frame, frameButton, index)
-                }
+                onClick={() => handleButtonPress(index)}
                 key={index}
               >
                 {frameButton.action === "mint" ? `⬗ ` : ""}
