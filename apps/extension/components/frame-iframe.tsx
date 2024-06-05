@@ -115,8 +115,6 @@ export default function FrameIFrame({ url, frameId, theme }: FrameIFrameProps) {
             height={aspectRatio ? iFrameWidth / aspectRatio : 0}
             src={iFrameUrl.toString()}
             title="x.frames iframe"
-            seamless
-            allow=""
             onLoad={handleLoad}
             onError={handleError}
           />

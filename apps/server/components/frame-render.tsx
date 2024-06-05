@@ -224,9 +224,9 @@ export default function FrameRender(props: FrameRenderProps) {
 
   const onMint = useCallback(
     (t: OnMintArgs) => {
-      if (!confirm(`Mint ${t.target}?`)) {
-        return;
-      }
+      // if (!confirm(`Mint ${t.target}?`)) {
+      //   return;
+      // }
 
       if (!account.address) {
         openConnectModal?.();

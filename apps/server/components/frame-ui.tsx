@@ -93,15 +93,53 @@ function FrameImageComponent({
   );
 }
 
-function FrameButtonComponent(
-  props: React.ButtonHTMLAttributes<HTMLButtonElement>
-) {
+function LinkButton(props: React.AnchorHTMLAttributes<HTMLAnchorElement>) {
+  return (
+    <a
+      className="flex-1 block text-center py-2 px-4 border text-sm min-w-24 rounded text-gray-700 bg-white border-gray-200 hover:bg-gray-200/50 hover:border-gray-300/75 transition-colors duration-150 dark:bg-white/10 dark:border-white/10 dark:text-gray-200 dark:hover:bg-white/15 dark:hover:border-white/15 disabled:opacity-50 disabled:cursor-not-allowed"
+      {...props}
+    />
+  );
+}
+
+function Button(props: React.ButtonHTMLAttributes<HTMLButtonElement>) {
   return (
     <button
       type="button"
       className="flex-1 py-2 px-4 border text-sm min-w-24 rounded text-gray-700 bg-white border-gray-200 hover:bg-gray-200/50 hover:border-gray-300/75 transition-colors duration-150 dark:bg-white/10 dark:border-white/10 dark:text-gray-200 dark:hover:bg-white/15 dark:hover:border-white/15 disabled:opacity-50 disabled:cursor-not-allowed"
       {...props}
     />
+  );
+}
+
+function FrameButtonComponent({
+  disabled,
+  button,
+  onClick,
+}: {
+  disabled: boolean;
+  button: FrameButton;
+  onClick?: () => void;
+}) {
+  if (button.action === "link") {
+    return (
+      <LinkButton
+        href={button.target}
+        target="_blank"
+        rel="noopener noreferrer nofollow"
+      >
+        {button.label}
+        {" ↗"}
+      </LinkButton>
+    );
+  }
+  return (
+    <Button disabled={disabled} onClick={onClick}>
+      {button.action === "mint" ? `⬗ ` : ""}
+      {button.label}
+      {button.action === "tx" ? <TxIcon /> : ""}
+      {button.action === "post_redirect" ? ` ↗` : ""}
+    </Button>
   );
 }
 
@@ -140,12 +178,10 @@ function FrameUIError({
     <FrameContainerComponent style={{ aspectRatio: "1.91/1" }}>
       <div className="flex flex-col gap-3 items-center justify-center">
         <div>{children}</div>
-        {onReset && (
-          <div className={isButtonShown ? "visible" : "invisible"}>
-            <FrameButtonComponent onClick={onReset} disabled={!isButtonShown}>
-              Reset
-            </FrameButtonComponent>
-          </div>
+        {onReset && isButtonShown && (
+          <Button onClick={onReset} disabled={!isButtonShown}>
+            Reset
+          </Button>
         )}
       </div>
     </FrameContainerComponent>
@@ -242,19 +278,11 @@ export function FrameUI({ frameState, FrameImage, onReset }: FrameUIProps) {
           <div className="flex flex-row gap-2 flex-wrap">
             {frame.buttons?.map((frameButton: FrameButton, index: number) => (
               <FrameButtonComponent
-                type="button"
+                key={index}
                 disabled={!!isLoading}
                 onClick={() => handleButtonPress(index)}
-                key={index}
-              >
-                {frameButton.action === "mint" ? `⬗ ` : ""}
-                {frameButton.label}
-                {frameButton.action === "tx" ? <TxIcon /> : ""}
-                {frameButton.action === "post_redirect" ||
-                frameButton.action === "link"
-                  ? ` ↗`
-                  : ""}
-              </FrameButtonComponent>
+                button={frameButton}
+              />
             ))}
           </div>
         </div>

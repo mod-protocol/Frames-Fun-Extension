@@ -123,15 +123,19 @@ const getAnchorElement = (el: Element) => {
 interface FrameModel {
   frame?: {
     buttons?: any[]
+    version?: string
+    image?: string
   }
   status: "success" | "failure"
 }
 
+// TODO a workaround for now -- e.g. https://farcaster.vote/4ae20a8eb4caa52f5588f7bb9f3c6d6b7cf003a5b03f4589edea1000000002d1 is not parsed / validated correctly
 const isValidFrame = (frameModel: FrameModel) => {
   return (
     frameModel?.frame &&
     (frameModel.status === "success" ||
-      (frameModel.frame.buttons?.length ?? 0) > 0)
+      (frameModel.frame.buttons?.length ?? 0) > 0 ||
+      !!frameModel.frame?.image)
   )
 }
 
