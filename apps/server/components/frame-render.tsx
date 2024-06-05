@@ -25,6 +25,7 @@ import { useFarcasterIdentityRemote } from "@/hooks/use-farcaster-identity-remot
 
 import { FrameUI } from "./frame-ui";
 import { Toast, useToast } from "./toast";
+import { useWalletModalMeasure } from "./use-wallet-modal-measure";
 
 type FrameRenderProps = {
   frameId?: string;
@@ -35,6 +36,8 @@ type FrameRenderProps = {
   frameContext: FarcasterFrameContext;
 };
 
+export const MODAL_PADDING = 50;
+
 function FrameComponent({
   state,
   frameId,
@@ -43,13 +46,19 @@ function FrameComponent({
   frameId?: string;
 }) {
   const [ref, { width, height }] = useMeasure();
+  const [modalSize] = useWalletModalMeasure();
+  const modalW = modalSize?.width != null ? modalSize.width + MODAL_PADDING : 0;
+  const modalH =
+    modalSize?.height != null ? modalSize.height + MODAL_PADDING : 0;
+  const w = Math.max(modalW, width || 0);
+  const h = Math.max(modalH || 0, height || 0);
 
   useEffect(() => {
     parent?.postMessage(
-      { type: "FRAME_RENDERED", frameId, data: { width, height } },
+      { type: "FRAME_RENDERED", frameId, data: { width: w, height: h } },
       "*"
     );
-  }, [width, height]);
+  }, [w, h, frameId]);
 
   const handleReset = () => {
     if (state.homeframeUrl) {
@@ -60,16 +69,14 @@ function FrameComponent({
   const url = state.homeframeUrl;
   const frameResult = state.frame?.status === "done" ? state.frame.frame : null;
   const buttons = frameResult?.frame.buttons;
+  const showConnectButton = buttons?.some(
+    (b) => b.action === "tx" || b.action === "mint"
+  );
 
   return (
     <div ref={ref} className="flex flex-col dark:bg-white/20 rounded-md">
       <FrameUI frameState={state} onReset={handleReset} />
-      {buttons?.some((b) => b.action === "tx" || b.action === "mint") && (
-        <div className="flex justify-end p-4 border-b border-gray-200 dark:border-black">
-          <ConnectButton />
-        </div>
-      )}
-      <div className="flex flex-col gap-2 p-2">
+      <div className="flex gap-2 p-2">
         <div className="flex flex-row flex-1 flex-wrap gap-x-4 items-center justify-between p-2 text-sm text-gray-500 dark:text-gray-300">
           {url && (
             <a
@@ -84,6 +91,11 @@ function FrameComponent({
           )}
           {/* <div className="text-xs opacity-75">Powered by x.frames</div> */}
         </div>
+        {showConnectButton && (
+          <div className="flex justify-end px-4 py-2 border-l border-gray-200 dark:border-black">
+            <ConnectButton />
+          </div>
+        )}
       </div>
     </div>
   );
