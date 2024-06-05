@@ -114,7 +114,7 @@ export default function FrameIFrame({ url, frameId, theme }: FrameIFrameProps) {
             width={iFrameWidth}
             height={aspectRatio ? iFrameWidth / aspectRatio : 0}
             src={iFrameUrl.toString()}
-            title="Frames.fun (i)frame"
+            title="x.frames iframe"
             seamless
             allow=""
             onLoad={handleLoad}

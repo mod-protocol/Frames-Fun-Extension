@@ -22,7 +22,7 @@ export const getStyle = () => {
 
 export const getInlineAnchorList: PlasmoGetInlineAnchorList = async () => {
   const anchors = document.querySelectorAll(
-    'div[data-testid="card.wrapper"] > div > a:not([data-x-frames-processed]), div[data-testid="tweetText"] > a:not([data-x-frames-processed])'
+    'div[data-testid="card.wrapper"] > div:first-child > a:not([data-x-frames-processed]), div[data-testid="tweetText"] > a:not([data-x-frames-processed])'
   )
   return Array.from(anchors).map((element) => ({
     element,
@@ -120,6 +120,21 @@ const getAnchorElement = (el: Element) => {
   return null
 }
 
+interface FrameModel {
+  frame?: {
+    buttons?: any[]
+  }
+  status: "success" | "failure"
+}
+
+const isValidFrame = (frameModel: FrameModel) => {
+  return (
+    frameModel?.frame &&
+    (frameModel.status === "success" ||
+      (frameModel.frame.buttons?.length ?? 0) > 0)
+  )
+}
+
 export const render: PlasmoRender<any> = async (
   { anchor, createRootContainer },
   InlineCSUIContainer
@@ -161,8 +176,7 @@ export const render: PlasmoRender<any> = async (
   )
 
   const frameModel = await fetchFrameModel(frameUrl)
-  const isValidFrame = frameModel?.frame && frameModel.status === "success"
-  if (!isValidFrame) {
+  if (!isValidFrame(frameModel)) {
     return
   }
 

@@ -82,7 +82,7 @@ function FrameComponent({
               {new URL(url).host}
             </a>
           )}
-          <div className="text-xs opacity-75">Powered by x.frames</div>
+          {/* <div className="text-xs opacity-75">Powered by x.frames</div> */}
         </div>
       </div>
     </div>
