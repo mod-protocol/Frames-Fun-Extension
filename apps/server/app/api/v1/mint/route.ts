@@ -113,7 +113,7 @@ export async function GET(request: NextRequest) {
       method: "eth_sendTransaction",
       params: {
         ...mintTx!.data,
-        value: hexToBigInt(mintTx?.data.value).toString(),
+        value: hexToBigInt(mintTx?.data.value || 0).toString(),
       },
     };
 

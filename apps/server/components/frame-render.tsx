@@ -67,7 +67,10 @@ function FrameComponent({
   };
 
   const url = state.homeframeUrl;
-  const frameResult = state.frame?.status === "done" ? state.frame.frame : null;
+  const frameResult =
+    state.currentFrameStackItem?.status === "done"
+      ? state.currentFrameStackItem.frameResult
+      : null;
   const buttons = frameResult?.frame.buttons;
   const showConnectButton = buttons?.some(
     (b) => b.action === "tx" || b.action === "mint"
@@ -182,7 +185,7 @@ export default function FrameRender(props: FrameRenderProps) {
     async ({ transactionData }: OnTransactionArgs) => {
       const { params, chainId, method } = transactionData;
       if (!chainId.startsWith("eip155:")) {
-        alert(`Unrecognized chainId ${chainId}`);
+        setToast(`Unrecognized chainId ${chainId}`, "error");
         return null;
       }
 
@@ -204,7 +207,7 @@ export default function FrameRender(props: FrameRenderProps) {
         const transactionParams = {
           to: params.to,
           data: params.data,
-          value: params.value ? BigInt(params.value) : undefined,
+          value: BigInt(params.value || 0),
         };
         console.debug("sending transaction", transactionParams);
         setToast("Continue in your wallet to complete the transaction");
@@ -218,7 +221,7 @@ export default function FrameRender(props: FrameRenderProps) {
         return null;
       }
     },
-    [account.address, currentChainId, config, openConnectModal]
+    [account.address, currentChainId, config, openConnectModal, setToast]
   );
 
   const onMint = useCallback(
@@ -249,7 +252,7 @@ export default function FrameRender(props: FrameRenderProps) {
           onTransaction({ ...t, transactionData: json.data });
         })
         .catch((e) => {
-          alert(e);
+          setToast(e.message, "error");
           console.error(e);
         });
     },

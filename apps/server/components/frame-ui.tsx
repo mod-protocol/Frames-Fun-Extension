@@ -200,10 +200,11 @@ export function FrameUI({ frameState, FrameImage, onReset }: FrameUIProps) {
   const prevFrame = frameState.framesStack?.find(
     (item, idx) => idx > 0 && item.status === "done"
   );
-  const currentFrame = frameState.frame;
+  const currentFrame = frameState.currentFrameStackItem;
   const frameResult =
-    currentFrame?.status === "done" ? currentFrame.frame : null;
-  const prevFrameResult = prevFrame?.status === "done" ? prevFrame.frame : null;
+    currentFrame?.status === "done" ? currentFrame.frameResult : null;
+  const prevFrameResult =
+    prevFrame?.status === "done" ? prevFrame.frameResult : null;
   const isLoading = currentFrame?.status === "pending";
   const frame: Frame | Partial<Frame> | undefined = frameResult
     ? frameResult.frame
@@ -212,6 +213,7 @@ export function FrameUI({ frameState, FrameImage, onReset }: FrameUIProps) {
     return <FrameUIError {...errorFrameProps}>Missing frame url</FrameUIError>;
   }
 
+  console.log("FRAMES", currentFrame, prevFrame);
   if (!currentFrame) {
     return null;
   }
