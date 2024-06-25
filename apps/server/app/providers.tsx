@@ -1,5 +1,6 @@
 "use client";
 
+import { useTheme } from "@/hooks/use-theme";
 import {
   RainbowKitProvider,
   getDefaultConfig,
@@ -24,7 +25,6 @@ import {
   scrollSepolia,
   liskSepolia,
 } from "wagmi/chains";
-import { useTheme } from "@/hooks/use-theme";
 
 const config = getDefaultConfig({
   appName: "Open Frames proxy server",
@@ -51,9 +51,16 @@ const config = getDefaultConfig({
 
 const queryClient = new QueryClient();
 
-export function Providers({ children }: { children: React.ReactNode }) {
-  const theme = useTheme();
-  const themeFunction = theme === "light" ? lightTheme : darkTheme;
+export function Providers({
+  children,
+  theme,
+}: {
+  children: React.ReactNode;
+  theme?: "light" | "dark";
+}) {
+  const clientTheme = useTheme();
+  const themeFunction =
+    (theme || clientTheme) === "light" ? lightTheme : darkTheme;
   return (
     <WagmiProvider config={config}>
       <QueryClientProvider client={queryClient}>
