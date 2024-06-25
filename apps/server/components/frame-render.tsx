@@ -89,7 +89,6 @@ function FrameComponent({
               {new URL(url).host}
             </a>
           )}
-          {/* <div className="text-xs opacity-75">Powered by x.frames</div> */}
         </div>
         {showConnectButton && (
           <div className="flex justify-end px-4 py-2 border-l border-gray-200 dark:border-black">

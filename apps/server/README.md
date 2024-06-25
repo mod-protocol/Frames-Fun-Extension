@@ -1,4 +1,4 @@
-# x.frames server
+# Open Frames X server
 
 This is a [Next.js](https://nextjs.org/)-based server used by the [extension](/apps/extension/README.md) for rendering and interacting with [frames](https://docs.farcaster.xyz/learn/what-is-farcaster/frames)
 
@@ -14,8 +14,8 @@ First, create your own `.env` file in the `apps/server` directory (you can use t
 - `FARCASTER_DEVELOPER_FID` - FID for the dev account
 - `NEXT_PUBLIC_WALLETCONNECT_ID` - your [WalletConnect](https://cloud.walletconnect.com/sign-in) Project ID
 
-
 Then you can run the server from the monorepo root directory:
+
 ```
 pnpm dev --filter=server
 ```

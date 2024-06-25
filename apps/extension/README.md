@@ -1,6 +1,6 @@
-# x.frames extension
+# Open Frames extension
 
-This is a [Plasmo extension](https://docs.plasmo.com/) project for the x.frames browser extension.
+This is a [Plasmo extension](https://docs.plasmo.com/) project for the Open Frames X browser extension.
 
 ## Getting Started
 

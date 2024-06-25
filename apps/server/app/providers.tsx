@@ -26,7 +26,7 @@ import {
 } from "wagmi/chains";
 
 const config = getDefaultConfig({
-  appName: "x.frames proxy server",
+  appName: "Open Frames proxy server",
   projectId: process.env.NEXT_PUBLIC_WALLETCONNECT_ID!,
   chains: [
     mainnet,

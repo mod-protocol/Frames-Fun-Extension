@@ -1,6 +1,6 @@
-# x.frames
+# Open Frames X
 
-x.frames is a browser extension for Google Chrome which allows you to interact with [frames](https://docs.farcaster.xyz/learn/what-is-farcaster/frames) posted on [x](https://www.x.com) (formerly Twitter).
+Open Frames X is a browser extension for Google Chrome which allows you to interact with [frames](https://docs.farcaster.xyz/learn/what-is-farcaster/frames) posted on [x](https://www.x.com) (formerly Twitter).
 
 ## What's inside?
 
@@ -23,7 +23,6 @@ This Turborepo has some additional tools already setup for you:
 - [TypeScript](https://www.typescriptlang.org/) for static type checking
 - [ESLint](https://eslint.org/) for code linting
 - [Prettier](https://prettier.io) for code formatting
-
 
 ## Extension
 

@@ -1,8 +1,8 @@
 {
   "name": "extension",
-  "displayName": "x.frames",
+  "displayName": "Open Frames X",
   "version": "0.0.1",
-  "description": "Frames extension for Twitter/X",
+  "description": "Use Frames across the web, starting with X",
   "author": "ds8",
   "scripts": {
     "dev": "plasmo dev",

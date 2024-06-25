@@ -18,9 +18,9 @@ export default function IndexPopup() {
     <div className="p-4 flex flex-col justify-between items-center bg-gradient-to-r from-violet-100 to-purple-100 text-violet-950 min-w-96 text-base gap-7">
       <div className="p-4 text-center flex flex-col gap-5">
         <div>
-          <h2 className="text-2xl font-bold">x.frames</h2>
+          <h2 className="text-2xl font-bold">Open Frames X</h2>
           <span className="text-sm text-slate-500">
-            Welcome to x.frames extension
+            Welcome to Open Frames X
           </span>
         </div>
         {shownAuthUi ? (
