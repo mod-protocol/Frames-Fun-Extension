@@ -33,15 +33,27 @@ export const getInlineAnchorList: PlasmoGetInlineAnchorList = async () => {
 interface FrameWrapperProps {
   url: string
   originalUrl: string
-  // frame: Frame
   frameId: string
+}
+
+function determineTheme(window?: Window) {
+  const doc = window?.document
+  if (doc) {
+    const rootNode = doc.querySelector("html")
+    const colorScheme = rootNode?.style.colorScheme
+    if (colorScheme) {
+      return colorScheme
+    }
+  }
+  return typeof window !== "undefined" &&
+    window.matchMedia("(prefers-color-scheme: dark)").matches
+    ? "dark"
+    : "light"
 }
 
 const FrameWrapper = (props: FrameWrapperProps) => {
   const { url, frameId } = props
-  const darkMode =
-    window && window.matchMedia("(prefers-color-scheme: dark)").matches
-  const theme = darkMode ? "dark" : "light"
+  const theme = determineTheme(window)
   return (
     <div
       data-framewrapperurl={url}

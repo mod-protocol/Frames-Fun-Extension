@@ -213,7 +213,6 @@ export function FrameUI({ frameState, FrameImage, onReset }: FrameUIProps) {
     return <FrameUIError {...errorFrameProps}>Missing frame url</FrameUIError>;
   }
 
-  console.log("FRAMES", currentFrame, prevFrame);
   if (!currentFrame) {
     return null;
   }
