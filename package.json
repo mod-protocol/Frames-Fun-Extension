@@ -1,6 +1,7 @@
 {
   "name": "xframes-monorepo",
   "private": true,
+  "license": "MIT",
   "scripts": {
     "build": "turbo build",
     "dev": "turbo dev",

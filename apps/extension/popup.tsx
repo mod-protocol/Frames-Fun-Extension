@@ -53,6 +53,14 @@ export default function IndexPopup() {
             rel="noopener noreferrer nofollow"
             className="underline hover:text-slate-700">
             frames.js
+          </a>{" "}
+          and
+          <a
+            href="https://openframes.xyz"
+            target="_blank"
+            rel="noopener noreferrer nofollow"
+            className="underline hover:text-slate-700">
+            Open Frames
           </a>
         </span>
       </div>
