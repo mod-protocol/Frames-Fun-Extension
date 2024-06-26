@@ -263,6 +263,10 @@ export default function FrameRender(props: FrameRenderProps) {
     ...props,
     onTransaction,
     onMint,
+    frameContext: {
+      ...props.frameContext,
+      address: account.address || props.frameContext.address,
+    },
     connectedAddress: account.address,
   };
 
