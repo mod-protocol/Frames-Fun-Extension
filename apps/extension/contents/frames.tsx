@@ -36,12 +36,12 @@ interface FrameWrapperProps {
   frameId: string
 }
 
-function determineTheme(window?: Window) {
+function determineTheme(window?: Window): "dark" | "light" {
   const doc = window?.document
   if (doc) {
     const rootNode = doc.querySelector("html")
     const colorScheme = rootNode?.style.colorScheme
-    if (colorScheme) {
+    if (colorScheme === "dark" || colorScheme === "light") {
       return colorScheme
     }
   }
