@@ -4,7 +4,7 @@ import "./globals.css";
 import "@rainbow-me/rainbowkit/styles.css";
 
 export const metadata: Metadata = {
-  title: "Open Frames Extension Server",
+  title: "Frames.fun Extension Server",
   description: "Serves signer and frame renderer",
 };
 

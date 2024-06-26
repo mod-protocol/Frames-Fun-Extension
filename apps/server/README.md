@@ -1,4 +1,4 @@
-# Open Frames X server
+# Frames.fun server
 
 This is a [Next.js](https://nextjs.org/)-based server used by the [extension](/apps/extension/README.md) for rendering and interacting with [frames](https://docs.farcaster.xyz/learn/what-is-farcaster/frames)
 

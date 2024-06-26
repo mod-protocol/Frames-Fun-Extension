@@ -1,6 +1,6 @@
-# Open Frames X
+# Frames.fun
 
-Open Frames X is a browser extension for Google Chrome which allows you to interact with [frames](https://docs.farcaster.xyz/learn/what-is-farcaster/frames) posted on [x](https://www.x.com) (formerly Twitter).
+Frames.fun is a browser extension for Google Chrome which allows you to interact with [frames](https://docs.farcaster.xyz/learn/what-is-farcaster/frames) posted on [x](https://www.x.com) (formerly Twitter).
 
 ## What's inside?
 

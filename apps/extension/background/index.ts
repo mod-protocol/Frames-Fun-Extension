@@ -1,3 +1,3 @@
 export {}
 
-console.log("Open Frames X background script running")
+console.log("Frames.fun background script running")
