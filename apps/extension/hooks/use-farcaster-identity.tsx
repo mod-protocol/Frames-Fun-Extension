@@ -62,6 +62,10 @@ interface SignedKeyRequestBody {
   signature: string
   requestFid: string
   deadline: number
+  sponsorship?: {
+    sponsorFid: number
+    signature: string
+  }
 }
 
 async function fetchCreateSignedKeyRequest(requestBody: SignedKeyRequestBody) {
@@ -73,10 +77,7 @@ async function fetchCreateSignedKeyRequest(requestBody: SignedKeyRequestBody) {
   return result
 }
 
-interface SignerResponse {
-  signature: string
-  requestFid: string
-  deadline: number
+type SignerResponse = Omit<SignedKeyRequestBody, "key"> & {
   requestSigner: string
 }
 
@@ -161,12 +162,13 @@ export function useFarcasterIdentity(options?: Options): FarcasterSignerState {
       const authorizationBody = await fetchCreateSignature(
         keypairString.publicKey
       )
-      const { signature, requestFid, deadline } = authorizationBody
+      const { signature, requestFid, deadline, sponsorship } = authorizationBody
       const { signedKeyRequest } = await fetchCreateSignedKeyRequest({
         key: keypairString.publicKey,
         signature,
         requestFid,
-        deadline
+        deadline,
+        sponsorship
       })
 
       const user: FarcasterSigner = {
