@@ -31,7 +31,7 @@ const SIGNED_KEY_REQUEST_TYPE = [
 
 const SIGNATURE_VALIDITY = 86400; // 1 day
 
-export async function handler(req: NextRequest) {
+async function handler(req: NextRequest) {
   // TODO: Authentication
   try {
     const { publicKey } = (await req.json()) as { publicKey: `0x${string}` };
