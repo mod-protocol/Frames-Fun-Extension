@@ -162,8 +162,13 @@ export function useFarcasterIdentity(): FarcasterSignerState {
         requestFid: number;
         deadline: number;
         requestSigner: string;
+        sponsorship?: {
+          sponsorFid: number;
+          signature: string;
+        };
       } = await authorizationResponse.json();
-      const { signature, requestFid, deadline } = authorizationBody;
+      const { signature, requestFid, deadline, sponsorship } =
+        authorizationBody;
       if (authorizationResponse.status === 200) {
         const {
           result: { signedKeyRequest },
@@ -178,6 +183,7 @@ export function useFarcasterIdentity(): FarcasterSignerState {
               signature,
               requestFid,
               deadline,
+              sponsorship,
             }),
           })
         ).json()) as {
