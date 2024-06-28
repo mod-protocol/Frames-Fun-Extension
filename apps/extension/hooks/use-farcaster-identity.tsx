@@ -62,7 +62,7 @@ interface SignedKeyRequestBody {
   signature: string
   requestFid: string
   deadline: number
-  sponsorship: {
+  sponsorship?: {
     sponsorFid: number
     signature: string
   }
@@ -78,9 +78,6 @@ async function fetchCreateSignedKeyRequest(requestBody: SignedKeyRequestBody) {
 }
 
 type SignerResponse = Omit<SignedKeyRequestBody, "key"> & {
-  signature: string
-  requestFid: string
-  deadline: number
   requestSigner: string
 }
 
