@@ -13,6 +13,10 @@ import {
   OnTransactionArgs,
   OnTransactionFunc,
 } from "@frames.js/render";
+import {
+  AnonymousSignerState,
+  useAnonymousIdentity,
+} from "../hooks/use-anonymous-identity";
 import { useFrame } from "@frames.js/render/use-frame";
 // import { FrameImageNext } from "@frames.js/render/next";
 import { useMeasure } from "@uidotdev/usehooks";
@@ -105,8 +109,19 @@ function FrameComponent({
 
 interface FrameRenderComponentProps {
   frameState: FrameState;
-  signerState: FarcasterSignerState;
+  signerState: FarcasterSignerState | AnonymousSignerState;
   frameId?: string;
+}
+
+function isFarcasterSignerState(
+  signerState: unknown
+): signerState is FarcasterSignerState {
+  return (
+    typeof signerState === "object" &&
+    signerState !== null &&
+    "signer" in signerState &&
+    "hasSigner" in signerState
+  );
 }
 
 function FrameRenderComponent({
@@ -117,7 +132,8 @@ function FrameRenderComponent({
   return (
     <div className="relative">
       <FrameComponent state={frameState} frameId={frameId} />
-      {signerState?.signer?.status === "pending_approval" &&
+      {isFarcasterSignerState(signerState) &&
+        signerState?.signer?.status === "pending_approval" &&
         signerState?.signer?.signerApprovalUrl && (
           <div className="absolute top-0 left-0 bottom-0 right-0 flex items-center justify-center">
             <div className="max-w-72 bg-white px-4 py-6 rounded-md shadow-xl backdrop-blur-sm">
@@ -141,6 +157,27 @@ const useFrameDefaults = {
   specification: "farcaster" as const,
 };
 
+function useAnonymousFrame(props: FrameRenderWithIdentityProps) {
+  // TODO: this is wasteful because it renders the frame twice
+  const anonymousSignerState = useAnonymousIdentity();
+  const anonymousFrameState = useFrame<{}, FrameActionBodyPayload>({
+    ...useFrameDefaults,
+    ...props,
+    homeframeUrl: props.url,
+    signerState: anonymousSignerState,
+  });
+
+  const currentFrame =
+    anonymousFrameState.currentFrameStackItem?.status === "done"
+      ? anonymousFrameState.currentFrameStackItem.frameResult
+      : null;
+
+  const isFrameAnonymous =
+    currentFrame?.frame.accepts?.some((a) => a.id === "anonymous") || false;
+
+  return { anonymousFrameState, anonymousSignerState, isFrameAnonymous };
+}
+
 function FrameRenderWithRemoteIdentity({
   frameId,
   ...props
@@ -152,10 +189,13 @@ function FrameRenderWithRemoteIdentity({
     homeframeUrl: props.url,
     signerState,
   });
+  const { isFrameAnonymous, anonymousFrameState, anonymousSignerState } =
+    useAnonymousFrame(props);
+
   return (
     <FrameRenderComponent
-      frameState={frameState}
-      signerState={signerState}
+      frameState={isFrameAnonymous ? anonymousFrameState : frameState}
+      signerState={isFrameAnonymous ? anonymousSignerState : signerState}
       frameId={frameId}
     />
   );
@@ -169,8 +209,13 @@ function FrameRenderWithLocalIdentity(props: FrameRenderWithIdentityProps) {
     homeframeUrl: props.url,
     signerState,
   });
+  const { isFrameAnonymous, anonymousFrameState, anonymousSignerState } =
+    useAnonymousFrame(props);
   return (
-    <FrameRenderComponent frameState={frameState} signerState={signerState} />
+    <FrameRenderComponent
+      frameState={isFrameAnonymous ? anonymousFrameState : frameState}
+      signerState={isFrameAnonymous ? anonymousSignerState : signerState}
+    />
   );
 }
 
