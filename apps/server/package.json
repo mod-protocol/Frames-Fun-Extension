@@ -9,7 +9,7 @@
     "lint": "next lint"
   },
   "dependencies": {
-    "@frames.js/render": "^0.2.12",
+    "@frames.js/render": "^0.2.16",
     "@noble/ed25519": "^2.0.0",
     "@rainbow-me/rainbowkit": "^2.1.0",
     "@reservoir0x/reservoir-sdk": "^2.2.3",
