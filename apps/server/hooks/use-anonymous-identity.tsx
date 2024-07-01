@@ -1,5 +1,3 @@
-// import type { SignerStateInstance } from "@frames.js/render"
-
 import { SignerStateInstance } from "@frames.js/render";
 
 export type AnonymousSignerState = SignerStateInstance<{}>;

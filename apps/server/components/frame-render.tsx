@@ -158,13 +158,14 @@ const useFrameDefaults = {
 };
 
 function useAnonymousFrame(props: FrameRenderWithIdentityProps) {
-  // TODO: this is wasteful because it renders the frame twice
+  // TODO: find a way to do this without loading the frame twice
   const anonymousSignerState = useAnonymousIdentity();
   const anonymousFrameState = useFrame<{}, FrameActionBodyPayload>({
     ...useFrameDefaults,
     ...props,
     homeframeUrl: props.url,
     signerState: anonymousSignerState,
+    specification: "openframes",
   });
 
   const currentFrame =
@@ -175,7 +176,11 @@ function useAnonymousFrame(props: FrameRenderWithIdentityProps) {
   const isFrameAnonymous =
     currentFrame?.frame.accepts?.some((a) => a.id === "anonymous") || false;
 
-  return { anonymousFrameState, anonymousSignerState, isFrameAnonymous };
+  return {
+    anonymousFrameState,
+    anonymousSignerState,
+    isFrameAnonymous,
+  };
 }
 
 function FrameRenderWithRemoteIdentity({
@@ -211,6 +216,7 @@ function FrameRenderWithLocalIdentity(props: FrameRenderWithIdentityProps) {
   });
   const { isFrameAnonymous, anonymousFrameState, anonymousSignerState } =
     useAnonymousFrame(props);
+
   return (
     <FrameRenderComponent
       frameState={isFrameAnonymous ? anonymousFrameState : frameState}
