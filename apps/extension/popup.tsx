@@ -52,7 +52,7 @@ export default function IndexPopup() {
             className="underline hover:text-slate-700">
             frames.js
           </a>{" "}
-          and
+          and{" "}
           <a
             href="https://openframes.xyz"
             target="_blank"

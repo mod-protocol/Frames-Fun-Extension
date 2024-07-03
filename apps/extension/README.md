@@ -26,8 +26,6 @@ For further guidance, [visit our Documentation](https://docs.plasmo.com/)
 
 ## Making production build
 
-Run the following in the monorepo root:
-
 ```bash
 pnpm build --filter extension
 ```

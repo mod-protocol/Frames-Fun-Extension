@@ -39,7 +39,6 @@ Make sure to set all the necessary environment variables for both the [server](/
 To build all apps and packages, run the following command:
 
 ```
-cd xframes
 pnpm build
 ```
 
@@ -48,6 +47,5 @@ pnpm build
 To develop all apps and packages, run the following command:
 
 ```
-cd xframes
 pnpm dev
 ```
