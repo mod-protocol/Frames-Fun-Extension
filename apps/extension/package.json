@@ -7,6 +7,7 @@
   "scripts": {
     "dev": "plasmo dev",
     "build": "plasmo build",
+    "build:all": "plasmo build --target=firefox-mv2 && plasmo build --target=chrome-mv3 && plasmo build --target=safari-mv3",
     "package": "plasmo package"
   },
   "dependencies": {
@@ -36,6 +37,12 @@
   "manifest": {
     "host_permissions": [
       "https://x.com/*"
-    ]
+    ],
+    "browser_specific_settings": {
+      "gecko": {
+        "id": "extension@frames.fun",
+        "strict_min_version": "0.0.1"
+      }
+    }
   }
 }

@@ -10,6 +10,8 @@ import {
 } from "viem";
 import * as viemChains from "viem/chains";
 
+export { OPTIONS } from "../../options";
+
 export async function GET(request: NextRequest) {
   try {
     const searchParams = request.nextUrl.searchParams;
