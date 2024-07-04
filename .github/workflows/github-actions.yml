@@ -19,7 +19,7 @@ jobs:
           cache: "pnpm"
       - name: Install dependencies
         run: pnpm install
+      - name: Build the extension
+        run: pnpm build --filter=extension
       - name: Lint
         run: pnpm lint
-      - name: Build the extension
-        run: pnpm build
