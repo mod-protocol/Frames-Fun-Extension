@@ -1,6 +1,8 @@
 import { NextRequest, NextResponse } from "next/server";
 import { mnemonicToAccount } from "viem/accounts";
 
+export { OPTIONS } from "../../options";
+
 type SignedKeyRequestSponsorship = {
   sponsorFid: number;
   signature: string; // sponsorship signature by sponsorFid
