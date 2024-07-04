@@ -1,6 +1,7 @@
 import { useStorage } from "@plasmohq/storage/hook"
 
-import { FARCASTER_SIGNER_KEY } from "~utils/storage"
+import { FARCASTER_SIGNER_KEY } from "~constants"
+
 import { FarcasterSigner } from "./use-farcaster-identity"
 
 export function useSignerStorage<T>(defaultValue: T) {
