@@ -13,7 +13,7 @@ export const getStyle = () => {
 }
 
 export const config: PlasmoCSConfig = {
-  matches: ["https://twitter.com/*", "https://x.com/*"]
+  matches: ["https://x.com/*"]
 }
 
 interface AuthModalContainerProps extends React.PropsWithChildren {
