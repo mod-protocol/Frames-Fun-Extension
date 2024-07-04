@@ -11,7 +11,7 @@ import { sendToBackground } from "@plasmohq/messaging"
 import FrameIFrame from "~components/frame-iframe"
 
 export const config: PlasmoCSConfig = {
-  matches: ["https://twitter.com/*", "https://x.com/*"]
+  matches: ["https://x.com/*"]
 }
 
 export const getStyle = () => {
