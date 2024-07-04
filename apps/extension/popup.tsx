@@ -12,7 +12,8 @@ export default function IndexPopup() {
   const handleClick = hasSigner ? logout : onSignerlessFramePress
 
   const shownAuthUi =
-    signer?.status === "pending_approval" && signer?.signerApprovalUrl
+    signer?.status === "pending_approval" && !!signer?.signerApprovalUrl
+  const showLoggedOutUi = !signer
 
   return (
     <div className="p-4 flex flex-col justify-between items-center bg-gradient-to-r from-violet-100 to-purple-100 text-violet-950 min-w-96 text-base gap-7">
@@ -26,10 +27,12 @@ export default function IndexPopup() {
             <FarcasterAuthUI signer={signer} logout={logout} />
           </div>
         ) : (
-          <div className="text-slate-700">
-            Log in with your Farcaster account and start using Farcaster frames
-            on Twitter/X
-          </div>
+          showLoggedOutUi && (
+            <div className="text-slate-700">
+              Log in with your Farcaster account and start using Farcaster
+              frames on Twitter/X
+            </div>
+          )
         )}
       </div>
       <div className="flex flex-col gap-5 items-center">
