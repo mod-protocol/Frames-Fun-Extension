@@ -1,23 +1,25 @@
 import { sendToBackground } from "@plasmohq/messaging"
 
-import {
+import type {
   FetchFrameRequestOptions,
-  FetchFrameRequestParams
+  FetchFrameRequestParams,
+  FetchFrameResponse,
+  FetchFrameResponseSuccess
 } from "~background/messages/fetch-frame"
 
-import { JsonExtractor } from "./fetch-json"
-
-export const fetchFrame = async <T>(
+export async function fetchFrame(
   url: string,
   options: FetchFrameRequestOptions | undefined = {},
   params: FetchFrameRequestParams | undefined = {}
-): Promise<JsonExtractor<T>> => {
-  const { error, body, status } = await sendToBackground({
+): Promise<FetchFrameResponseSuccess> {
+  const response: FetchFrameResponse = await sendToBackground({
     name: "fetch-frame",
     body: { url, options, params }
   })
-  if (error) {
-    throw new Error(error)
+
+  if ("error" in response) {
+    throw new Error(response.error)
   }
-  return { json: () => body, status }
+
+  return response.body
 }

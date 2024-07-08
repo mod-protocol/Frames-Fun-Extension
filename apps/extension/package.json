@@ -15,6 +15,7 @@
     "@plasmohq/storage": "^1.9.3",
     "@uidotdev/usehooks": "^2.4.1",
     "cheerio": "1.0.0-rc.12",
+    "frames.js": "^0.16.5",
     "plasmo": "0.86.3",
     "qrcode.react": "^3.1.0",
     "react": "18.2.0",
@@ -35,7 +36,8 @@
   },
   "manifest": {
     "host_permissions": [
-      "https://x.com/*"
+      "https://x.com/*",
+      "https://discord.com/*"
     ]
   }
 }

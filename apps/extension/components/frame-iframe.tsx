@@ -1,4 +1,3 @@
-import { useMeasure } from "@uidotdev/usehooks"
 import { useCallback, useEffect, useRef, useState } from "react"
 
 import { frameEmbedProxyUrl } from "~constants"
@@ -15,10 +14,9 @@ type FrameIFrameProps = {
 export default function FrameIFrame({ url, frameId, theme }: FrameIFrameProps) {
   const { signer, onSignerlessFramePress, logout } = useFarcasterIdentity()
   const iframeRef = useRef<HTMLIFrameElement | null>(null)
-  const [measuredRef, { width }] = useMeasure()
   const [loading, setLoading] = useState(true)
   const [error, setError] = useState(false)
-  const [aspectRatio, setAspectRatio] = useState(0)
+  const [aspectRatio, setAspectRatio] = useState(1.91 / 1)
 
   const iFrameUrl = new URL(frameEmbedProxyUrl)
   iFrameUrl.searchParams.append("url", url)
@@ -45,7 +43,7 @@ export default function FrameIFrame({ url, frameId, theme }: FrameIFrameProps) {
     return () => {
       window.removeEventListener("message", handleFrameMessage)
     }
-  }, [width, frameId])
+  }, [frameId])
 
   useEffect(() => {
     const iframe = iframeRef.current?.contentWindow
@@ -77,8 +75,6 @@ export default function FrameIFrame({ url, frameId, theme }: FrameIFrameProps) {
     return () => window.removeEventListener("message", handleMessage)
   }, [onSignerlessFramePress, logout])
 
-  const iFrameWidth = width || 100
-
   const handleLoad = useCallback(() => {
     setLoading(false)
   }, [setLoading])
@@ -88,37 +84,30 @@ export default function FrameIFrame({ url, frameId, theme }: FrameIFrameProps) {
   }, [setLoading, setError])
 
   return (
-    <div ref={measuredRef}>
-      <div
-        className="flex flex-col overflow-hidden items-center justify-center w-full text-gray-700 rounded-md bg-gray-100 border border-gray-200 dark:bg-black dark:border-white/20 dark:text-gray-200 aspect-video relative transition-all duration-150 ease-in-out"
-        style={
-          aspectRatio
-            ? { width: iFrameWidth, height: iFrameWidth / aspectRatio }
-            : {}
-        }>
-        {error ? (
-          <div>Error loading frame :(</div>
-        ) : (
-          loading && (
-            <div className="flex gap-3 items-center">
-              <LoadingIndicator />
-              <div>{new URL(url).origin}</div>
-            </div>
-          )
-        )}
-        <div className="absolute top-0 left-0 w-full h-full">
-          <iframe
-            ref={iframeRef}
-            className="transition-all duration-150 ease-in-out"
-            referrerPolicy="no-referrer"
-            width={iFrameWidth}
-            height={aspectRatio ? iFrameWidth / aspectRatio : 0}
-            src={iFrameUrl.toString()}
-            title="Frames.fun iframe"
-            onLoad={handleLoad}
-            onError={handleError}
-          />
-        </div>
+    <div
+      className="flex flex-col overflow-hidden items-center justify-center w-full text-gray-700 rounded-md bg-gray-100 border border-gray-200 dark:bg-black dark:border-white/20 dark:text-gray-200 aspect-video relative transition-all duration-150 ease-in-out"
+      style={{
+        aspectRatio
+      }}>
+      {error ? (
+        <div>Error loading frame :(</div>
+      ) : (
+        loading && (
+          <div className="flex gap-3 items-center">
+            <LoadingIndicator />
+          </div>
+        )
+      )}
+      <div className="absolute top-0 left-0 bottom-0 right-0">
+        <iframe
+          ref={iframeRef}
+          className="transition-all duration-150 ease-in-out w-full h-full"
+          referrerPolicy="no-referrer"
+          src={iFrameUrl.toString()}
+          title="Frames.fun iframe"
+          onLoad={handleLoad}
+          onError={handleError}
+        />
       </div>
     </div>
   )
