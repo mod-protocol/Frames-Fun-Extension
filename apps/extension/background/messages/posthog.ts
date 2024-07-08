@@ -48,6 +48,7 @@ const handler: PlasmoMessaging.MessageHandler<
       break
     }
     case "sign_out": {
+      posthog.reset()
       posthog.capture("sign_out", { uid })
       break
     }
