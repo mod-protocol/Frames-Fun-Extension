@@ -2,6 +2,7 @@ import { FrameState } from "@frames.js/render";
 import { Frame, FrameButton } from "frames.js";
 import React, { ImgHTMLAttributes, useEffect, useState } from "react";
 import { MessageSquareIcon, OctagonXIcon, TxIcon } from "./icons";
+import { LoadingIndicator } from "./loading-indicator";
 
 export type FrameUIProps = {
   frameState: FrameState;
@@ -232,7 +233,7 @@ export function FrameUI({ frameState, FrameImage, onReset }: FrameUIProps) {
   if (!frame) {
     return (
       <FrameUIError {...errorFrameProps} showButtonThreshold={5000}>
-        Loading...
+        <LoadingIndicator />
       </FrameUIError>
     );
   }

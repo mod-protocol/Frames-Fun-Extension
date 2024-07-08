@@ -9,6 +9,8 @@ import { createRoot } from "react-dom/client"
 import { sendToBackground } from "@plasmohq/messaging"
 
 import FrameIFrame from "~components/frame-iframe"
+import { fetchFrame } from "~utils/fetch-frame"
+import { isValidFrame } from "~utils/is-valid-frame"
 
 export const config: PlasmoCSConfig = {
   matches: ["https://x.com/*"]
@@ -94,23 +96,6 @@ const fetchRedirectUrl = async (url: string) => {
   }
 }
 
-const fetchFrameModel = async (url: string) => {
-  try {
-    const frameCandidateResp = await sendToBackground({
-      name: "fetch-frame",
-      body: { url }
-    })
-    const { body } = frameCandidateResp
-    return body
-  } catch (e) {
-    console.error("ERROR", e)
-    return {
-      frame: null,
-      errors: { frame: "failed to fetch: " + (e as any).message }
-    }
-  }
-}
-
 const clearWrapperParent = (el: Element) => {
   const containerElement = el
   while (el.firstChild) {
@@ -130,25 +115,6 @@ const getAnchorElement = (el: Element) => {
     return el.parentElement
   }
   return null
-}
-
-interface FrameModel {
-  frame?: {
-    buttons?: any[]
-    version?: string
-    image?: string
-  }
-  status: "success" | "failure"
-}
-
-// TODO a workaround for now -- e.g. https://farcaster.vote/4ae20a8eb4caa52f5588f7bb9f3c6d6b7cf003a5b03f4589edea1000000002d1 is not parsed / validated correctly
-const isValidFrame = (frameModel: FrameModel) => {
-  return (
-    frameModel?.frame &&
-    (frameModel.status === "success" ||
-      (frameModel.frame.buttons?.length ?? 0) > 0 ||
-      !!frameModel.frame?.image)
-  )
 }
 
 export const render: PlasmoRender<any> = async (
@@ -174,6 +140,7 @@ export const render: PlasmoRender<any> = async (
   if (!frameUrl) {
     return
   }
+
   const cardWrapperParent = anchorElement.closest(
     "[data-testid='card.wrapper']"
   )?.parentElement
@@ -191,8 +158,8 @@ export const render: PlasmoRender<any> = async (
     tweetParentFrameUrls.concat(frameUrl).join(",")
   )
 
-  const frameModel = await fetchFrameModel(frameUrl)
-  if (!isValidFrame(frameModel)) {
+  const frame = await fetchFrame(frameUrl)
+  if (!isValidFrame(frame)) {
     return
   }
 
