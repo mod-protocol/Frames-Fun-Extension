@@ -26,6 +26,9 @@ importers:
 
   apps/extension:
     dependencies:
+      '@frames.js/render':
+        specifier: ^0.2.18
+        version: 0.2.18(@cloudflare/workers-types@4.20240605.0)(@lens-protocol/client@2.2.0)(@types/express@4.17.21)(@xmtp/frames-validator@0.6.2)(next@14.1.4)(react-dom@18.2.0)(react@18.2.0)(typescript@5.3.3)(viem@2.13.7)(zod@3.23.8)
       '@noble/ed25519':
         specifier: ^2.0.0
         version: 2.1.0
@@ -47,6 +50,9 @@ importers:
       plasmo:
         specifier: 0.86.3
         version: 0.86.3(postcss@8.4.38)(react-dom@18.2.0)(react@18.2.0)
+      posthog-js:
+        specifier: ^1.144.1
+        version: 1.144.1
       qrcode.react:
         specifier: ^3.1.0
         version: 3.1.0(react@18.2.0)
@@ -2404,6 +2410,21 @@ packages:
       cross-spawn: 7.0.3
     dev: false
 
+  /@farcaster/core@0.14.13(typescript@5.3.3)(zod@3.23.8):
+    resolution: {integrity: sha512-rsXfHvXznyj3eNMlJj8ObOtSh05/UD3bLrso6wh7somH5iONVqqk+a8QIaswaxAD0Unc0NhBXK03BI7qDg2Qug==}
+    dependencies:
+      '@noble/curves': 1.4.0
+      '@noble/hashes': 1.4.0
+      bs58: 5.0.0
+      neverthrow: 6.1.0
+      viem: 1.21.4(typescript@5.3.3)(zod@3.23.8)
+    transitivePeerDependencies:
+      - bufferutil
+      - typescript
+      - utf-8-validate
+      - zod
+    dev: false
+
   /@farcaster/core@0.14.13(typescript@5.4.5)(zod@3.23.8):
     resolution: {integrity: sha512-rsXfHvXznyj3eNMlJj8ObOtSh05/UD3bLrso6wh7somH5iONVqqk+a8QIaswaxAD0Unc0NhBXK03BI7qDg2Qug==}
     dependencies:
@@ -2490,6 +2511,31 @@ packages:
       - '@types/express'
       - '@xmtp/frames-validator'
       - '@xmtp/proto'
+      - bufferutil
+      - typescript
+      - utf-8-validate
+      - zod
+    dev: false
+
+  /@frames.js/render@0.2.18(@cloudflare/workers-types@4.20240605.0)(@lens-protocol/client@2.2.0)(@types/express@4.17.21)(@xmtp/frames-validator@0.6.2)(next@14.1.4)(react-dom@18.2.0)(react@18.2.0)(typescript@5.3.3)(viem@2.13.7)(zod@3.23.8):
+    resolution: {integrity: sha512-GMG05HHigjGNXs2CS4cMfEbA1HbNpH7LQn116dDtkBdLVIjC0S/6kn6SyLhoQIHDIn0H61f9WWwaw62ynCMaOg==}
+    peerDependencies:
+      next: ^14.1.0
+      react: ^18.2.0
+      react-dom: ^18.2.0
+      viem: ^2.7.8
+    dependencies:
+      '@farcaster/core': 0.14.13(typescript@5.3.3)(zod@3.23.8)
+      frames.js: 0.17.3(@cloudflare/workers-types@4.20240605.0)(@lens-protocol/client@2.2.0)(@types/express@4.17.21)(@xmtp/frames-validator@0.6.2)(next@14.1.4)(react-dom@18.2.0)(react@18.2.0)(typescript@5.3.3)(zod@3.23.8)
+      next: 14.1.4(@babel/core@7.24.7)(react-dom@18.2.0)(react@18.2.0)
+      react: 18.2.0
+      react-dom: 18.2.0(react@18.2.0)
+      viem: 2.13.7(typescript@5.3.3)(zod@3.23.8)
+    transitivePeerDependencies:
+      - '@cloudflare/workers-types'
+      - '@lens-protocol/client'
+      - '@types/express'
+      - '@xmtp/frames-validator'
       - bufferutil
       - typescript
       - utf-8-validate
@@ -8343,6 +8389,21 @@ packages:
       - zod
     dev: false
 
+  /@xmtp/frames-validator@0.6.2(typescript@5.3.3)(zod@3.23.8):
+    resolution: {integrity: sha512-BoNn1YoAr5Rw/A5xuKOOz3KaJefAQ1ps+Ph3FjnqdU7WJVPB2oJ9ExcmaWwF3K+/IMjf9SncUMoTO9eLP1vhRQ==}
+    engines: {node: '>=18'}
+    dependencies:
+      '@noble/curves': 1.4.0
+      '@noble/hashes': 1.4.0
+      '@xmtp/proto': 3.61.1
+      viem: 2.17.3(typescript@5.3.3)(zod@3.23.8)
+    transitivePeerDependencies:
+      - bufferutil
+      - typescript
+      - utf-8-validate
+      - zod
+    dev: false
+
   /@xmtp/proto@3.54.0:
     resolution: {integrity: sha512-X0jDRR19/tH0qRB8mM/H/vBueQAK22VZF4QUnDN7TgnbNaOYL5DvSmPfXFH+xzeGKQ5S0zgwc+qFJbI4xoKNHw==}
     dependencies:
@@ -8392,6 +8453,21 @@ packages:
       - zod
     dev: true
 
+  /abitype@0.9.8(typescript@5.3.3)(zod@3.23.8):
+    resolution: {integrity: sha512-puLifILdm+8sjyss4S+fsUN09obiT1g2YW6CtcQF+QDzxR0euzgEB29MZujC6zMk2a6SVmtttq1fc6+YFA7WYQ==}
+    peerDependencies:
+      typescript: '>=5.0.4'
+      zod: ^3 >=3.19.1
+    peerDependenciesMeta:
+      typescript:
+        optional: true
+      zod:
+        optional: true
+    dependencies:
+      typescript: 5.3.3
+      zod: 3.23.8
+    dev: false
+
   /abitype@0.9.8(typescript@5.4.5)(zod@3.23.8):
     resolution: {integrity: sha512-puLifILdm+8sjyss4S+fsUN09obiT1g2YW6CtcQF+QDzxR0euzgEB29MZujC6zMk2a6SVmtttq1fc6+YFA7WYQ==}
     peerDependencies:
@@ -8435,6 +8511,21 @@ packages:
     dependencies:
       typescript: 5.4.5
       zod: 3.23.8
+
+  /abitype@1.0.5(typescript@5.3.3)(zod@3.23.8):
+    resolution: {integrity: sha512-YzDhti7cjlfaBhHutMaboYB21Ha3rXR9QTkNJFzYC4kC8YclaiwPBBBJY8ejFdu2wnJeZCVZSMlQJ7fi8S6hsw==}
+    peerDependencies:
+      typescript: '>=5.0.4'
+      zod: ^3 >=3.22.0
+    peerDependenciesMeta:
+      typescript:
+        optional: true
+      zod:
+        optional: true
+    dependencies:
+      typescript: 5.3.3
+      zod: 3.23.8
+    dev: false
 
   /abort-controller@3.0.0:
     resolution: {integrity: sha512-h8lQ8tacZYnR3vNQTgibj+tODHI5/+l06Au2Pcriv/Gmet0eaj4TwWH41sO9wnHDiQsEj19q0drzdWdeAHtweg==}
@@ -11160,6 +11251,10 @@ packages:
       bser: 2.1.1
     dev: false
 
+  /fflate@0.4.8:
+    resolution: {integrity: sha512-FJqqoDBR00Mdj9ppamLa/Y7vxm+PRmNWA67N846RvsoYVMKB4q3y/de5PA7gUmRMYK/8CMz2GDZQmCRN1wBcWA==}
+    dev: false
+
   /fflate@0.7.4:
     resolution: {integrity: sha512-5u2V/CDW15QM1XbbgS+0DfPxVB+jUKhWEKuuFuHncbk3tEEqzmoXL+2KyOFuKGqOnmdIy0/davWF1CkuwtibCw==}
     dev: false
@@ -11393,6 +11488,35 @@ packages:
       react: 18.2.0
       react-dom: 18.2.0(react@18.2.0)
       viem: 2.13.7(typescript@5.4.5)(zod@3.23.8)
+    transitivePeerDependencies:
+      - bufferutil
+      - typescript
+      - utf-8-validate
+      - zod
+    dev: false
+
+  /frames.js@0.17.3(@cloudflare/workers-types@4.20240605.0)(@lens-protocol/client@2.2.0)(@types/express@4.17.21)(@xmtp/frames-validator@0.6.2)(next@14.1.4)(react-dom@18.2.0)(react@18.2.0)(typescript@5.3.3)(zod@3.23.8):
+    resolution: {integrity: sha512-sAI/fb9oTbBWeMcXFQCjKHPFcMzo5D7ZvIQBrJeSqgPgwGUcBBhwCadDR1lEhbJJ+QOJu7mjNQ3i/a1v9rKUIw==}
+    peerDependencies:
+      '@cloudflare/workers-types': ^4.20240320.1
+      '@lens-protocol/client': ^2.0.0
+      '@types/express': ^4.17.21
+      '@xmtp/frames-validator': ^0.6.2
+      next: ^14.1.0
+      react: ^18.2.0
+      react-dom: ^18.2.0
+    dependencies:
+      '@cloudflare/workers-types': 4.20240605.0
+      '@lens-protocol/client': 2.2.0(@lens-protocol/metadata@1.2.0)(@types/react@18.2.48)(ethers@6.13.0)(react@18.2.0)
+      '@types/express': 4.17.21
+      '@vercel/og': 0.6.2
+      '@xmtp/frames-validator': 0.6.2(typescript@5.3.3)(zod@3.23.8)
+      cheerio: 1.0.0-rc.12
+      next: 14.1.4(@babel/core@7.24.7)(react-dom@18.2.0)(react@18.2.0)
+      protobufjs: 7.3.0
+      react: 18.2.0
+      react-dom: 18.2.0(react@18.2.0)
+      viem: 2.13.7(typescript@5.3.3)(zod@3.23.8)
     transitivePeerDependencies:
       - bufferutil
       - typescript
@@ -12519,6 +12643,14 @@ packages:
       ws: '*'
     dependencies:
       ws: 8.13.0
+    dev: false
+
+  /isows@1.0.4(ws@8.17.1):
+    resolution: {integrity: sha512-hEzjY+x9u9hPmBom9IIAqdJCwNLax+xrPb51vEPpERoFlIxgmZcHzsT5jKG06nvInKOBGvReAVz80Umed5CczQ==}
+    peerDependencies:
+      ws: '*'
+    dependencies:
+      ws: 8.17.1
     dev: false
 
   /iterator.prototype@1.1.2:
@@ -14797,6 +14929,14 @@ packages:
       nanoid: 3.3.7
       picocolors: 1.0.1
       source-map-js: 1.2.0
+
+  /posthog-js@1.144.1:
+    resolution: {integrity: sha512-CdhKH+gTFJgVEDVdeuhD2Mm4yMRr6qhVSPNDUQ7naJfj/HMhcZjF/ImobluD4YGd85dLq9nqImEIcf4Twd9h6g==}
+    dependencies:
+      fflate: 0.4.8
+      preact: 10.22.0
+      web-vitals: 4.2.1
+    dev: false
 
   /posthtml-parser@0.10.2:
     resolution: {integrity: sha512-PId6zZ/2lyJi9LiKfe+i2xv57oEjJgWbsHGGANwos5AvdQp98i6AtamAl8gzSVFGfQ43Glb5D614cvZf012VKg==}
@@ -17259,6 +17399,29 @@ packages:
     engines: {node: '>= 0.8'}
     dev: false
 
+  /viem@1.21.4(typescript@5.3.3)(zod@3.23.8):
+    resolution: {integrity: sha512-BNVYdSaUjeS2zKQgPs+49e5JKocfo60Ib2yiXOWBT6LuVxY1I/6fFX3waEtpXvL1Xn4qu+BVitVtMh9lyThyhQ==}
+    peerDependencies:
+      typescript: '>=5.0.4'
+    peerDependenciesMeta:
+      typescript:
+        optional: true
+    dependencies:
+      '@adraffy/ens-normalize': 1.10.0
+      '@noble/curves': 1.2.0
+      '@noble/hashes': 1.3.2
+      '@scure/bip32': 1.3.2
+      '@scure/bip39': 1.2.1
+      abitype: 0.9.8(typescript@5.3.3)(zod@3.23.8)
+      isows: 1.0.3(ws@8.13.0)
+      typescript: 5.3.3
+      ws: 8.13.0
+    transitivePeerDependencies:
+      - bufferutil
+      - utf-8-validate
+      - zod
+    dev: false
+
   /viem@1.21.4(typescript@5.4.5)(zod@3.23.8):
     resolution: {integrity: sha512-BNVYdSaUjeS2zKQgPs+49e5JKocfo60Ib2yiXOWBT6LuVxY1I/6fFX3waEtpXvL1Xn4qu+BVitVtMh9lyThyhQ==}
     peerDependencies:
@@ -17322,6 +17485,29 @@ packages:
       isows: 1.0.4(ws@8.13.0)
       typescript: 5.4.5
       ws: 8.13.0
+    transitivePeerDependencies:
+      - bufferutil
+      - utf-8-validate
+      - zod
+    dev: false
+
+  /viem@2.17.3(typescript@5.3.3)(zod@3.23.8):
+    resolution: {integrity: sha512-FY/1uBQWfko4Esy8mU1RamvL64TLy91LZwFyQJ20E6AI3vTTEOctWfSn0pkMKa3okq4Gxs5dJE7q1hmWOQ7xcw==}
+    peerDependencies:
+      typescript: '>=5.0.4'
+    peerDependenciesMeta:
+      typescript:
+        optional: true
+    dependencies:
+      '@adraffy/ens-normalize': 1.10.0
+      '@noble/curves': 1.4.0
+      '@noble/hashes': 1.4.0
+      '@scure/bip32': 1.4.0
+      '@scure/bip39': 1.3.0
+      abitype: 1.0.5(typescript@5.3.3)(zod@3.23.8)
+      isows: 1.0.4(ws@8.17.1)
+      typescript: 5.3.3
+      ws: 8.17.1
     transitivePeerDependencies:
       - bufferutil
       - utf-8-validate
@@ -17434,6 +17620,10 @@ packages:
 
   /web-vitals@3.5.2:
     resolution: {integrity: sha512-c0rhqNcHXRkY/ogGDJQxZ9Im9D19hDihbzSQJrsioex+KnFgmMzBiy57Z1EjkhX/+OjyBpclDCzz2ITtjokFmg==}
+
+  /web-vitals@4.2.1:
+    resolution: {integrity: sha512-U6bAxeudnhDqcXNl50JC4hLlqox9DZnngxfISZm3DMZnonW35xtJOVUc091L+DOY+6hVZVpKXoiCP0RiT6339Q==}
+    dev: false
 
   /webextension-polyfill@0.10.0:
     resolution: {integrity: sha512-c5s35LgVa5tFaHhrZDnr3FpQpjj1BB+RXhLTYUxGqBVN460HkbM8TBtEqdXWbpTKfzwCcjAZVF7zXCYSKtcp9g==}
@@ -17627,6 +17817,19 @@ packages:
         optional: true
       utf-8-validate:
         optional: true
+
+  /ws@8.17.1:
+    resolution: {integrity: sha512-6XQFvXTkbfUOZOKKILFG1PDK2NDQs4azKQl26T0YS5CxqWLgXajbPZ+h4gZekJyRqFU8pvnbAbbs/3TgRPy+GQ==}
+    engines: {node: '>=10.0.0'}
+    peerDependencies:
+      bufferutil: ^4.0.1
+      utf-8-validate: '>=5.0.2'
+    peerDependenciesMeta:
+      bufferutil:
+        optional: true
+      utf-8-validate:
+        optional: true
+    dev: false
 
   /ws@8.5.0:
     resolution: {integrity: sha512-BWX0SWVgLPzYwF8lTzEy1egjhS4S4OEAHfsO8o65WOVsrnSRGaSiUaa9e0ggGlkMTtBlmOpEXiie9RUcBO86qg==}

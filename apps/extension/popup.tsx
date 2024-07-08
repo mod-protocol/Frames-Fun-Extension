@@ -7,7 +7,9 @@ import { FarcasterAuthUI } from "~components/farcaster-auth-ui"
 
 export default function IndexPopup() {
   const { signer, hasSigner, isLoadingSigner, logout, onSignerlessFramePress } =
-    useFarcasterIdentity({ enablePolling: true })
+    useFarcasterIdentity({
+      enablePolling: true
+    })
 
   const handleClick = hasSigner ? logout : onSignerlessFramePress
 
