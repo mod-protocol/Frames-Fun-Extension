@@ -4,6 +4,7 @@
   "private": true,
   "type": "module",
   "exports": {
+    "./messaging": "./dist/messaging.js",
     "./types": "./dist/types.js"
   },
   "scripts": {

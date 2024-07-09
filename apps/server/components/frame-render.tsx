@@ -1,5 +1,6 @@
 "use client";
 
+import { sendMessageToExtension } from "@xframes/shared/messaging";
 import { usePostHog } from "posthog-js/react";
 import type { Frame } from "frames.js";
 import { FarcasterAuthUI } from "@xframes/ui/farcaster-auth-ui";
@@ -60,10 +61,13 @@ function FrameComponent({
   const h = Math.max(modalH || 0, height || 0);
 
   useEffect(() => {
-    parent?.postMessage(
-      { type: "FRAME_RENDERED", frameId, data: { width: w, height: h } },
-      "*"
-    );
+    if (window.parent) {
+      sendMessageToExtension({
+        type: "frame_rendered",
+        frameId,
+        data: { width: w, height: h },
+      });
+    }
   }, [w, h, frameId]);
 
   const handleReset = () => {

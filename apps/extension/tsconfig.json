@@ -15,6 +15,7 @@
     "baseUrl": ".",
     "strict": true,
     "verbatimModuleSyntax": false,
-    "esModuleInterop": true
+    "esModuleInterop": true,
+    "moduleResolution": "Bundler"
   }
 }

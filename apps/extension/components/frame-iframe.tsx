@@ -1,3 +1,8 @@
+import {
+  consumeMessageFromEmbed,
+  createMessageConsumer,
+  sendMessageToEmbed
+} from "@xframes/shared/messaging"
 import { useCallback, useEffect, useRef, useState } from "react"
 
 import { frameEmbedProxyUrl } from "~constants"
@@ -24,25 +29,13 @@ export default function FrameIFrame({ url, frameId, theme }: FrameIFrameProps) {
   iFrameUrl.searchParams.append("frameId", frameId)
 
   useEffect(() => {
-    const handleFrameMessage = (e: MessageEvent) => {
-      const { data: message } = e
-      const { type, data } = message
-      if (
-        type !== "FRAME_RENDERED" ||
-        message.frameId !== frameId ||
-        !data.height ||
-        !data.width
-      ) {
+    return consumeMessageFromEmbed("frame_rendered", (message) => {
+      if (message.frameId !== frameId) {
         return
       }
-      setAspectRatio(data.width / data.height)
-    }
 
-    window.addEventListener("message", handleFrameMessage)
-
-    return () => {
-      window.removeEventListener("message", handleFrameMessage)
-    }
+      setAspectRatio(message.data.width / message.data.height)
+    })
   }, [frameId])
 
   useEffect(() => {
@@ -54,26 +47,23 @@ export default function FrameIFrame({ url, frameId, theme }: FrameIFrameProps) {
     // signer === null - not loaded yet
     // signer === undefined - loaded and "empty"
     if (signer === undefined) {
-      // console.info("Sending logout message to iframe", iframe)
-      iframe.postMessage({ type: "SIGNER_LOGGED_OUT" }, "*")
+      sendMessageToEmbed(iframe, { type: "signed_out" })
     } else if (signer?.status === "approved") {
-      // console.info("Sending login message to iframe", iframe)
-      iframe.postMessage({ type: "SIGNER_LOGGED_IN", data: signer }, "*")
+      sendMessageToEmbed(iframe, { type: "signed_in", signer })
     }
   }, [signer, iframeRef])
 
   useEffect(() => {
-    const handleMessage = (e: MessageEvent) => {
-      // TODO check origin
-      if (e.data.type === "SIGNER_LOGIN") {
-        onSignerlessFramePress()
-      } else if (e.data.type === "SIGNER_LOGOUT") {
-        logout?.()
-      }
-    }
-    window.addEventListener("message", handleMessage)
-    return () => window.removeEventListener("message", handleMessage)
-  }, [onSignerlessFramePress, logout])
+    return createMessageConsumer("embed_signerless_press", () => {
+      onSignerlessFramePress()
+    })
+  }, [onSignerlessFramePress])
+
+  useEffect(() => {
+    return createMessageConsumer("embed_sign_out", () => {
+      logout?.()
+    })
+  }, [logout])
 
   const handleLoad = useCallback(() => {
     setLoading(false)

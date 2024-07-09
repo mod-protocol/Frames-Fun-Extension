@@ -17,48 +17,44 @@ export type FarcasterSigner =
   | FarcasterSignerApproved
   | FarcasterSignerPendingApproval;
 
-/* export type ServerMessagePayloadFrameRendered = {
+type MessageToServerFrameRendered = {
   type: "frame_rendered";
-  frameId?: string;
+  frameId: string | undefined;
   data: {
     height: number;
     width: number;
   };
 };
 
-export type ServerMessagePayloadSignerSignOut = {
-  type: "sign_out";
+type MessageToServerSignerSignOut = {
+  type: "embed_sign_out";
   frameId: string;
 };
 
-export type ServerMessagePayloadSignerSignIn = {
-  type: "sign_in";
+type MessageToServerSignerlessPress = {
+  type: "embed_signerless_press";
   frameId: string;
-  signer: FarcasterSignerApproved;
 };
 
-export type ServerMessagePayloadSignerSignInStart = {
-  type: "sign_in_start";
-  frameId: string;
-  signer: FarcasterSignerPendingApproval;
-};
+export type MessagesToExtension =
+  | MessageToServerFrameRendered
+  | MessageToServerSignerSignOut
+  | MessageToServerSignerlessPress;
 
-export type ServerMessagePayloadSignerSignedIn = {
+type MessageFromServerSignerSignedIn = {
   type: "signed_in";
   signer: FarcasterSignerApproved;
 };
 
-export type ServerMessagePayloadSignerSignedOut = {
+type MessageFromServerSignerSignedOut = {
   type: "signed_out";
 };
 
-export type ServerMessagePayload =
-  | ServerMessagePayloadFrameRendered
-  | ServerMessagePayloadSignerSignOut
-  | ServerMessagePayloadSignerSignIn
-  | ServerMessagePayloadSignerSignInStart
-  | ServerMessagePayloadSignerSignedIn
-  | ServerMessagePayloadSignerSignedOut;
+export type MessagesFromServer =
+  | MessageFromServerSignerSignedIn
+  | MessageFromServerSignerSignedOut;
+
+export type AllMessages = MessagesToExtension | MessagesFromServer;
 
 type DiscriminateUnion<T, K extends keyof T, V extends T[K]> = Extract<
   T,
@@ -69,9 +65,7 @@ type MapDiscriminatedUnion<T extends Record<K, string>, K extends keyof T> = {
   [V in T[K]]: DiscriminateUnion<T, K, V>;
 };
 
-type MessagesByAction = MapDiscriminatedUnion<ServerMessagePayload, "type">;
+type MessagesByType = MapDiscriminatedUnion<AllMessages, "type">;
 
-export type InferServerMessagePayloadFromType<
-  TAction extends keyof MessagesByAction,
-> = MessagesByAction[TAction];
-*/
+export type InferServerMessageFromType<TAction extends keyof MessagesByType> =
+  MessagesByType[TAction];

@@ -259,15 +259,17 @@ export function FrameUI({
   }
 
   const handleButtonPress = async (index: number) => {
-    if (frame.buttons && frame.buttons[index]) {
+    const button = frame.buttons && frame.buttons[index];
+
+    if (button) {
       onButtonPress?.({
-        button: frame.buttons[index],
+        button,
         index,
         url: currentFrame.url,
       });
 
       return Promise.resolve(
-        frameState.onButtonPress(frame as Frame, frame.buttons[index], index)
+        frameState.onButtonPress(frame as Frame, button, index)
       ).catch((e) => {
         console.error(e);
       });
