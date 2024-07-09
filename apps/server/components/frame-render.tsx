@@ -1,6 +1,7 @@
 "use client";
 
-import { Frame } from "frames.js";
+import { usePostHog } from "posthog-js/react";
+import type { Frame } from "frames.js";
 import { FarcasterAuthUI } from "@xframes/ui/farcaster-auth-ui";
 import { useFarcasterIdentity } from "../hooks/use-farcaster-identity";
 import {
@@ -27,7 +28,7 @@ import { sendTransaction, switchChain } from "wagmi/actions";
 
 import { useFarcasterIdentityRemote } from "@/hooks/use-farcaster-identity-remote";
 
-import { FrameUI } from "./frame-ui";
+import { FrameUI, type OnButtonPressFn } from "./frame-ui";
 import { Toast, useToast } from "./toast";
 import { useWalletModalMeasure } from "./use-wallet-modal-measure";
 
@@ -49,6 +50,7 @@ function FrameComponent({
   state: FrameState;
   frameId?: string;
 }) {
+  const posthog = usePostHog();
   const [ref, { width, height }] = useMeasure();
   const [modalSize] = useWalletModalMeasure();
   const modalW = modalSize?.width != null ? modalSize.width + MODAL_PADDING : 0;
@@ -70,6 +72,17 @@ function FrameComponent({
     }
   };
 
+  const trackButtonPress: OnButtonPressFn = ({ button, index, url }) => {
+    posthog.capture("frame_button_press", {
+      label: button.label,
+      action: button.action,
+      target: button.target,
+      post_url: "post_url" in button ? button.post_url : undefined,
+      index,
+      frame_url: url,
+    });
+  };
+
   const url = state.homeframeUrl;
   const frameResult =
     state.currentFrameStackItem?.status === "done"
@@ -82,7 +95,11 @@ function FrameComponent({
 
   return (
     <div ref={ref} className="flex flex-col dark:bg-white/20 rounded-md">
-      <FrameUI frameState={state} onReset={handleReset} />
+      <FrameUI
+        frameState={state}
+        onButtonPress={trackButtonPress}
+        onReset={handleReset}
+      />
       <div className="flex gap-2 p-2">
         <div className="flex flex-row flex-1 flex-wrap gap-x-4 items-center justify-between p-2 text-sm text-gray-500 dark:text-gray-300">
           {url && (
@@ -133,8 +150,7 @@ function FrameRenderComponent({
     <div className="relative">
       <FrameComponent state={frameState} frameId={frameId} />
       {isFarcasterSignerState(signerState) &&
-        signerState?.signer?.status === "pending_approval" &&
-        signerState?.signer?.signerApprovalUrl && (
+        signerState?.signer?.status === "pending_approval" && (
           <div className="absolute top-0 left-0 bottom-0 right-0 flex items-center justify-center">
             <div className="max-w-72 bg-white px-4 py-6 rounded-md shadow-xl backdrop-blur-sm">
               <FarcasterAuthUI authState={signerState} />
