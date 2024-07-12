@@ -64,8 +64,7 @@ const AuthModal: React.FC<PlasmoCSUIProps> = () => {
   })
 
   const loggedIn = hasSigner
-  const pendingApproval =
-    signer?.status === "pending_approval" && signer?.signerApprovalUrl
+  const pendingApproval = signer?.status === "pending_approval"
 
   useEffect(() => {
     let timeout: NodeJS.Timeout | undefined

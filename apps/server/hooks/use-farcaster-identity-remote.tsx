@@ -1,5 +1,9 @@
 "use client";
 
+import {
+  sendMessageToExtension,
+  consumeMessageFromServer,
+} from "@xframes/shared/messaging";
 import { useCallback, useEffect, useState } from "react";
 import { LOCAL_STORAGE_KEYS } from "../constants";
 import {
@@ -8,16 +12,14 @@ import {
   FrameActionBodyPayload,
   signFrameAction,
 } from "@frames.js/render";
-import {
-  createMessageConsumer,
-  sendServerMessage,
-} from "@/messaging/send-message";
+import { usePostHog } from "posthog-js/react";
 
 export function useFarcasterIdentityRemote({
   frameId,
 }: {
   frameId: string;
 }): FarcasterSignerState {
+  const posthog = usePostHog();
   const [isLoading, setLoading] = useState(false);
   const [farcasterUser, setFarcasterUser] = useState<FarcasterSigner | null>(
     getSignerFromLocalStorage()
@@ -25,6 +27,7 @@ export function useFarcasterIdentityRemote({
 
   // console.log("REMOTE IDENTITY!", farcasterUser);
   const handleLogout = useCallback(() => {
+    posthog.reset();
     setFarcasterUser(null);
     localStorage.removeItem(LOCAL_STORAGE_KEYS.FARCASTER_USER);
   }, [setFarcasterUser]);
@@ -41,22 +44,19 @@ export function useFarcasterIdentityRemote({
     [setFarcasterUser, setLoading]
   );
 
-  useEffect(
-    () => createMessageConsumer("SIGNER_LOGGED_OUT", () => handleLogout()),
-    [handleLogout]
-  );
+  useEffect(() => {
+    return consumeMessageFromServer("signed_out", () => handleLogout());
+  }, [handleLogout]);
 
-  useEffect(
-    () =>
-      createMessageConsumer<FarcasterSigner>("SIGNER_LOGGED_IN", (d) => {
-        const user = d.data!;
-        handleLogin(user);
-      }),
-    [handleLogin]
-  );
+  useEffect(() => {
+    return consumeMessageFromServer("signed_in", (message) => {
+      posthog.identify(message.signer.uid);
+      handleLogin(message.signer);
+    });
+  }, [handleLogin]);
 
   function logout() {
-    sendServerMessage({ type: "SIGNER_LOGOUT", frameId });
+    sendMessageToExtension({ type: "embed_sign_out", frameId });
     handleLogout();
   }
 
@@ -86,7 +86,7 @@ export function useFarcasterIdentityRemote({
 
   async function onSignerlessFramePress() {
     setLoading(true);
-    sendServerMessage({ type: "SIGNER_LOGIN", frameId });
+    sendMessageToExtension({ type: "embed_signerless_press", frameId });
   }
 
   return {

@@ -8,6 +8,8 @@ import {
   lightTheme,
 } from "@rainbow-me/rainbowkit";
 import { QueryClient, QueryClientProvider } from "@tanstack/react-query";
+import { PostHog } from "posthog-js";
+import { PostHogProvider } from "posthog-js/react";
 import { WagmiProvider } from "wagmi";
 import {
   arbitrum,
@@ -50,6 +52,16 @@ const config = getDefaultConfig({
 });
 
 const queryClient = new QueryClient();
+const posthog = new PostHog();
+
+if (
+  process.env.NEXT_PUBLIC_POSTHOG_API_HOST &&
+  process.env.NEXT_PUBLIC_POSTHOG_API_KEY
+) {
+  posthog.init(process.env.NEXT_PUBLIC_POSTHOG_API_KEY, {
+    api_host: process.env.NEXT_PUBLIC_POSTHOG_API_HOST,
+  });
+}
 
 export function Providers({
   children,
@@ -62,12 +74,14 @@ export function Providers({
   const themeFunction =
     (theme || clientTheme) === "light" ? lightTheme : darkTheme;
   return (
-    <WagmiProvider config={config}>
-      <QueryClientProvider client={queryClient}>
-        <RainbowKitProvider theme={themeFunction({ borderRadius: "small" })}>
-          {children}
-        </RainbowKitProvider>
-      </QueryClientProvider>
-    </WagmiProvider>
+    <PostHogProvider client={posthog}>
+      <WagmiProvider config={config}>
+        <QueryClientProvider client={queryClient}>
+          <RainbowKitProvider theme={themeFunction({ borderRadius: "small" })}>
+            {children}
+          </RainbowKitProvider>
+        </QueryClientProvider>
+      </WagmiProvider>
+    </PostHogProvider>
   );
 }

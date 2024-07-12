@@ -1,13 +1,28 @@
-import { FrameState } from "@frames.js/render";
-import { Frame, FrameButton } from "frames.js";
+import type { FrameState } from "@frames.js/render";
+import type { Frame, FrameButton } from "frames.js";
 import React, { ImgHTMLAttributes, useEffect, useState } from "react";
 import { MessageSquareIcon, OctagonXIcon, TxIcon } from "./icons";
 import { LoadingIndicator } from "./loading-indicator";
+
+type OnButtonPressFnParams = {
+  button: FrameButton;
+  /**
+   * Zero based index
+   */
+  index: number;
+  /**
+   * Current URL where the button is rendered
+   */
+  url: string;
+};
+
+export type OnButtonPressFn = (params: OnButtonPressFnParams) => void;
 
 export type FrameUIProps = {
   frameState: FrameState;
   FrameImage?: React.FC<ImgHTMLAttributes<HTMLImageElement> & { src: string }>;
   onReset?: () => void;
+  onButtonPress?: OnButtonPressFn;
 };
 
 type MessageTooltipProps = {
@@ -194,7 +209,12 @@ function isPartial(frame: Partial<Frame>): boolean {
 }
 
 /** A UI component only, that should be easy for any app to integrate */
-export function FrameUI({ frameState, FrameImage, onReset }: FrameUIProps) {
+export function FrameUI({
+  frameState,
+  FrameImage,
+  onButtonPress,
+  onReset,
+}: FrameUIProps) {
   const errorFrameProps = {
     onReset,
   };
@@ -239,13 +259,22 @@ export function FrameUI({ frameState, FrameImage, onReset }: FrameUIProps) {
   }
 
   const handleButtonPress = async (index: number) => {
-    if (frame.buttons) {
+    const button = frame.buttons && frame.buttons[index];
+
+    if (button) {
+      onButtonPress?.({
+        button,
+        index,
+        url: currentFrame.url,
+      });
+
       return Promise.resolve(
-        frameState.onButtonPress(frame as Frame, frame.buttons[index]!, index)
+        frameState.onButtonPress(frame as Frame, button, index)
       ).catch((e) => {
         console.error(e);
       });
     }
+
     return Promise.resolve();
   };
 

@@ -1,11 +1,33 @@
-import { useEffect, useState } from "react"
+import type {
+  FarcasterSigner as BaseFarcasterSigner,
+  FarcasterSignerApproved as BaseFarcasterSignerApproved,
+  FarcasterSignerPendingApproval as BaseFarcasterSignerPendingApproval
+} from "@frames.js/render"
+import { useEffect, useRef, useState } from "react"
 
 import { signerProxyUrl } from "~constants"
 // TODO - extract to a common lib
-import { convertKeypairToHex, createKeypair } from "~utils/crypto"
+import {
+  convertKeypairToHex,
+  createKeypair,
+  generateRandomUserId,
+  type UserID
+} from "~utils/crypto"
 import { fetchJson } from "~utils/fetch-json"
+import { posthogCapture } from "~utils/posthog-capture"
 
 import { useSignerStorage } from "./use-signer-storage"
+
+type FarcasterSignerApproved = BaseFarcasterSignerApproved & { uid: UserID }
+
+type FarcasterSignerPendingApproval = BaseFarcasterSignerPendingApproval & {
+  uid: UserID
+}
+
+export type FarcasterSigner =
+  | Exclude<BaseFarcasterSigner, { status: "approved" | "pending_approval" }>
+  | FarcasterSignerApproved
+  | FarcasterSignerPendingApproval
 
 export interface FarcasterSignerState {
   signer?: FarcasterSigner | null
@@ -13,21 +35,6 @@ export interface FarcasterSignerState {
   isLoadingSigner?: boolean
   onSignerlessFramePress: () => void
   logout?: () => void
-}
-
-export interface FarcasterSigner {
-  /* the Farcaster signer private key */
-  privateKey: string
-  /* the Farcaster signer public key */
-  publicKey: string
-  // may be undefined if status is pending_approval
-  fid?: number
-  /** The status of the signer */
-  status: "approved" | "pending_approval" | "impersonating"
-  signature?: string
-  deadline?: number
-  signerApprovalUrl?: string
-  token?: any
 }
 
 interface SignedKeyRequest {
@@ -60,7 +67,7 @@ async function fetchSignedKeyRequest(token: string) {
 interface SignedKeyRequestBody {
   key: string
   signature: string
-  requestFid: string
+  requestFid: number
   deadline: number
   sponsorship?: {
     sponsorFid: number
@@ -88,35 +95,52 @@ async function fetchCreateSignature(publicKey: string) {
   }).then((res) => res.json())
 }
 
-interface Options {
+export interface UseFarcasterIdentityOptions {
   enablePolling?: boolean
 }
 
-export function useFarcasterIdentity(options?: Options): FarcasterSignerState {
+export function useFarcasterIdentity(
+  options?: UseFarcasterIdentityOptions
+): FarcasterSignerState {
   const enablePolling = options?.enablePolling ?? false
   const [isLoading, setLoading] = useState<boolean>(false)
   const [signer, setSigner, { remove: removeSigner }] = useSignerStorage(null)
+  const isSignedInRef = useRef(!!signer)
 
   async function logout() {
-    removeSigner()
+    if (signer) {
+      // this check is just to make typescript happy, this status is not used in the extension at all
+      if (signer.status !== "impersonating") {
+        posthogCapture({
+          action: "sign_out",
+          uid: signer.uid
+        })
+      }
+
+      isSignedInRef.current = false
+      removeSigner()
+    }
   }
 
   useEffect(() => {
     if (!signer || signer.status !== "pending_approval" || !enablePolling) {
       return
     }
-    let intervalId: any
+    let intervalId: NodeJS.Timeout
 
     const startPolling = () => {
       intervalId = setInterval(async () => {
         try {
           const result = await fetchSignedKeyRequest(signer.token)
-          const user = {
+          const user: FarcasterSigner = {
             ...signer,
             ...result,
             fid: result.signedKeyRequest.userFid,
             status: "approved" as const
           }
+
+          posthogCapture({ action: "sign_in", uid: user.uid })
+
           await setSigner(user)
           clearInterval(intervalId)
         } catch (error) {
@@ -171,15 +195,19 @@ export function useFarcasterIdentity(options?: Options): FarcasterSignerState {
         sponsorship
       })
 
-      const user: FarcasterSigner = {
+      const user: FarcasterSignerPendingApproval = {
         ...authorizationBody,
         publicKey: keypairString.publicKey,
         deadline: deadline,
         token: signedKeyRequest.token,
         signerApprovalUrl: signedKeyRequest.deeplinkUrl,
         privateKey: keypairString.privateKey,
-        status: "pending_approval"
+        status: "pending_approval" as const,
+        uid: generateRandomUserId()
       }
+
+      posthogCapture({ action: "sign_in_start", uid: user.uid })
+
       setSigner(user)
     } catch (error) {
       console.error("API Call failed", error)
@@ -188,7 +216,7 @@ export function useFarcasterIdentity(options?: Options): FarcasterSignerState {
 
   return {
     signer,
-    hasSigner: !!signer?.fid && !!signer.privateKey,
+    hasSigner: !!signer && signer.status === "approved",
     onSignerlessFramePress,
     logout,
     isLoadingSigner: isLoading

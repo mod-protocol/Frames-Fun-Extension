@@ -1,22 +1,16 @@
+import type { FarcasterSigner } from "@xframes/shared/types"
 import QRCode from "qrcode.react"
 
 export type FarcasterAuthUIProps = {
-  signer?: {
-    status: string
-    signerApprovalUrl?: string
-  } | null
+  signer?: FarcasterSigner | null
   logout?: () => void
 }
 
 export const FarcasterAuthUI = ({ signer, logout }: FarcasterAuthUIProps) => {
-  if (
-    !(
-      signer?.status === "pending_approval" &&
-      signer?.signerApprovalUrl
-    )
-  ) {
+  if (signer?.status !== "pending_approval") {
     return null
   }
+
   return (
     <div className="w-full flex flex-col gap-4 text-center">
       <div className="flex flex-row w-full gap-3 justify-between items-center">
