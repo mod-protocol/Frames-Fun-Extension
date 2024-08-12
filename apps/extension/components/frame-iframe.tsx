@@ -34,6 +34,13 @@ export default function FrameIFrame({ url, frameId, theme }: FrameIFrameProps) {
         return
       }
 
+      const newAspectRatio = message.data.width / message.data.height
+
+      if (Number.isNaN(newAspectRatio)) {
+        // keep default aspect ratio
+        return
+      }
+
       setAspectRatio(message.data.width / message.data.height)
     })
   }, [frameId])
