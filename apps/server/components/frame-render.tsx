@@ -32,6 +32,7 @@ import { useFarcasterIdentityRemote } from "@/hooks/use-farcaster-identity-remot
 import { FrameUI, type OnButtonPressFn } from "./frame-ui";
 import { Toast, useToast } from "./toast";
 import { useWalletModalMeasure } from "./use-wallet-modal-measure";
+import { encodePacked, hexToBytes } from "viem";
 
 type FrameRenderProps = {
   frameId?: string;
@@ -275,6 +276,22 @@ export default function FrameRender(props: FrameRenderProps) {
       }
 
       try {
+        const fcClientId = process.env.NEXT_PUBLIC_FARCASTER_CLIENT_ID
+          ? parseInt(process.env.NEXT_PUBLIC_FARCASTER_CLIENT_ID)
+          : null;
+        if (
+          fcClientId &&
+          transactionData.attribution !== false &&
+          params.data &&
+          hexToBytes(params.data).length > 4
+        ) {
+          const attribution = encodePacked(
+            ["bytes1", "uint32"],
+            ["0xfc", fcClientId]
+          );
+          params.data = (params.data + attribution.slice(2)) as `0x${string}`;
+        }
+
         const transactionParams = {
           to: params.to,
           data: params.data,
