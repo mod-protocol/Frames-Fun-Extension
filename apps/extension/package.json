@@ -11,14 +11,14 @@
     "lint": "tsc --noEmit"
   },
   "dependencies": {
-    "@frames.js/render": "^0.2.18",
+    "@frames.js/render": "^0.3.11",
     "@noble/ed25519": "^2.0.0",
     "@plasmohq/messaging": "^0.6.2",
     "@plasmohq/storage": "^1.9.3",
     "@xframes/shared": "workspace:*",
     "@uidotdev/usehooks": "^2.4.1",
     "cheerio": "1.0.0-rc.12",
-    "frames.js": "^0.16.5",
+    "frames.js": "^0.19.3",
     "plasmo": "0.86.3",
     "posthog-js": "^1.164.1",
     "qrcode.react": "^3.1.0",
