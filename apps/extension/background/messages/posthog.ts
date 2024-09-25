@@ -1,4 +1,4 @@
-import { posthog } from "posthog-js"
+import { posthog } from "posthog-js/dist/module.no-external"
 
 import type { PlasmoMessaging } from "@plasmohq/messaging"
 
@@ -26,8 +26,7 @@ if (
   process.env.PLASMO_PUBLIC_POSTHOG_API_KEY
 ) {
   posthog.init(process.env.PLASMO_PUBLIC_POSTHOG_API_KEY, {
-    api_host: process.env.PLASMO_PUBLIC_POSTHOG_API_HOST,
-    disable_external_dependency_loading: true
+    api_host: process.env.PLASMO_PUBLIC_POSTHOG_API_HOST
   })
 }
 
