@@ -9,21 +9,27 @@
     "lint": "next lint"
   },
   "dependencies": {
+    "@farcaster/hub-nodejs": "^0.12.7",
     "@frames.js/render": "^0.2.16",
     "@noble/ed25519": "^2.0.0",
     "@rainbow-me/rainbowkit": "^2.1.0",
     "@reservoir0x/reservoir-sdk": "^2.2.3",
     "@tanstack/react-query": "^5.37.1",
+    "@trpc/client": "11.0.0-rc.638",
+    "@trpc/server": "11.0.0-rc.638",
     "@uidotdev/usehooks": "^2.4.1",
-    "@xframes/ui": "workspace:*",
     "@xframes/shared": "workspace:*",
+    "@xframes/ui": "workspace:*",
+    "ffun-trpc-types": "file:ffun-trpc-types-0.1.0.tgz",
     "frames.js": "^0.16.5",
     "next": "14.1.4",
     "posthog-js": "^1.144.1",
     "react": "^18.2.0",
     "react-dom": "^18.2.0",
+    "superjson": "^2.2.1",
     "viem": "^2.9.15",
-    "wagmi": "^2.9.4"
+    "wagmi": "^2.9.4",
+    "zod": "^3.23.8"
   },
   "devDependencies": {
     "@frames.js/debugger": "^0.2.3",
