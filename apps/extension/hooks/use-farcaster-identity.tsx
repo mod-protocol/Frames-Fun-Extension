@@ -3,9 +3,11 @@ import type {
   FarcasterSignerApproved as BaseFarcasterSignerApproved,
   FarcasterSignerPendingApproval as BaseFarcasterSignerPendingApproval
 } from "@frames.js/render"
+import { BROWSER_EXTENSION_INTERACTIONS } from "ffun-trpc-types/dist/lib/interactions"
 import { useEffect, useRef, useState } from "react"
 
 import { signerProxyUrl } from "~constants"
+import { dispatchInteractionEvent } from "~services/events"
 // TODO - extract to a common lib
 import {
   convertKeypairToHex,
@@ -106,6 +108,16 @@ export function useFarcasterIdentity(
   const [isLoading, setLoading] = useState<boolean>(false)
   const [signer, setSigner, { remove: removeSigner }] = useSignerStorage(null)
   const isSignedInRef = useRef(!!signer)
+
+  useEffect(() => {
+    if (signer?.status === "approved") {
+      dispatchInteractionEvent(
+        BROWSER_EXTENSION_INTERACTIONS.user_installed_extension,
+        signer.fid,
+        signer.publicKey
+      )
+    }
+  }, [signer])
 
   async function logout() {
     if (signer) {

@@ -78,6 +78,12 @@ function FrameComponent({
   };
 
   const trackButtonPress: OnButtonPressFn = ({ button, index, url }) => {
+    sendMessageToExtension({
+      type: "frame_button_press",
+      buttonIndex: index,
+      frameUrl: url,
+    });
+
     posthog.capture("frame_button_press", {
       label: button.label,
       action: button.action,

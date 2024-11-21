@@ -9,6 +9,10 @@ on:
 jobs:
   build:
     runs-on: ubuntu-latest
+    env:
+      DEV_FRAMES_FUN_API_KEY: "api-key"
+      DEV_FRAMES_FUN_API_TRPC_URL: "http://localhost:3000/trpc"
+      FARCASTER_HUB_GRPC_URL: "http://localhost:5000"
     steps:
       - uses: actions/checkout@v4
       - uses: pnpm/action-setup@v4

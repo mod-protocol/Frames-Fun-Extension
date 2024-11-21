@@ -36,10 +36,17 @@ type MessageToServerSignerlessPress = {
   frameId: string;
 };
 
+type MessageToServerFrameButtonPressed = {
+  type: "frame_button_press";
+  frameUrl: string;
+  buttonIndex: number;
+};
+
 export type MessagesToExtension =
   | MessageToServerFrameRendered
   | MessageToServerSignerSignOut
-  | MessageToServerSignerlessPress;
+  | MessageToServerSignerlessPress
+  | MessageToServerFrameButtonPressed;
 
 type MessageFromServerSignerSignedIn = {
   type: "signed_in";

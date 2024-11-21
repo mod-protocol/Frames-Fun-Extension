@@ -6,3 +6,5 @@ export const framesProxyUrl =
   process.env.PLASMO_PUBLIC_FRAMES_PROXY_URL || `${baseProxyUrl}/api/v1/frames`
 export const frameEmbedProxyUrl =
   process.env.PLASMO_FRAME_EMBED_PROXY_URL || `${baseProxyUrl}/embed`
+export const eventsProxyUrl =
+  process.env.PLASMO_EVENTS_PROXY_URL || `${baseProxyUrl}/api/v1/events`

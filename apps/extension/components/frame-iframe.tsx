@@ -3,10 +3,12 @@ import {
   createMessageConsumer,
   sendMessageToEmbed
 } from "@xframes/shared/messaging"
+import { BROWSER_EXTENSION_INTERACTIONS } from "ffun-trpc-types/dist/lib/interactions"
 import { useCallback, useEffect, useRef, useState } from "react"
 
 import { frameEmbedProxyUrl } from "~constants"
 import { useFarcasterIdentity } from "~hooks/use-farcaster-identity"
+import { dispatchInteractionEvent } from "~services/events"
 
 import { LoadingIndicator } from "./loading-indicator"
 
@@ -44,6 +46,20 @@ export default function FrameIFrame({ url, frameId, theme }: FrameIFrameProps) {
       setAspectRatio(message.data.width / message.data.height)
     })
   }, [frameId])
+
+  useEffect(() => {
+    if (signer?.status !== "approved") {
+      return
+    }
+
+    return consumeMessageFromEmbed("frame_button_press", () => {
+      dispatchInteractionEvent(
+        BROWSER_EXTENSION_INTERACTIONS.user_interacted_with_frame,
+        signer.fid,
+        signer.publicKey
+      )
+    })
+  }, [signer])
 
   useEffect(() => {
     const iframe = iframeRef.current?.contentWindow
