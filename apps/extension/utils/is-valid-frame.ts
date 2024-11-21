@@ -1,36 +1,27 @@
-import type { Frame } from "frames.js"
-import type { ParsingReport } from "frames.js/frame-parsers"
+import {
+  isParseFramesWithReportsResult,
+  isParseResult,
+  isPartialFrame
+} from "@frames.js/render/helpers"
+import type { GETResponse } from "@frames.js/render/next"
 
-import type { FetchFrameResponseSuccess } from "~background/messages/fetch-frame"
-
-type ValidFrame = {
-  frame: Omit<Frame, "buttons"> & {
-    buttons: Required<Frame["buttons"]>
-  }
-  status: "success" | "failure" // support partial frames
-  reports: Record<string, ParsingReport[]>
-}
-
-export function isValidFrame(
-  response: FetchFrameResponseSuccess
-): response is ValidFrame {
-  if (
-    "message" in response ||
-    !("status" in response) ||
-    !("frame" in response)
-  ) {
-    return false
+export function isValidFrame(response: GETResponse): boolean {
+  if (isParseFramesWithReportsResult(response)) {
+    if (
+      response.farcaster.status === "success" ||
+      response.openframes.status === "success" ||
+      isPartialFrame(response.farcaster) ||
+      isPartialFrame(response.openframes)
+    ) {
+      return true
+    }
   }
 
-  if (response.status === "success") {
-    return true
+  if (isParseResult(response)) {
+    if (response.status === "success" || isPartialFrame(response)) {
+      return true
+    }
   }
 
-  // allow partial frames
-  return (
-    typeof response.frame.image === "string" &&
-    "buttons" in response.frame &&
-    Array.isArray(response.frame.buttons) &&
-    response.frame.buttons.length > 0
-  )
+  return false
 }

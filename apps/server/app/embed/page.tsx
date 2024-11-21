@@ -1,5 +1,4 @@
 import FrameRender from "@/components/frame-render";
-import { fallbackFrameContext } from "@frames.js/render";
 import { Providers } from "../providers";
 
 export default async function Home(props: {
@@ -16,11 +15,7 @@ export default async function Home(props: {
     <div className={`${theme} h-dvh w-full`}>
       <div className="dark:bg-black h-full w-full">
         <Providers theme={theme}>
-          <FrameRender
-            frameId={frameId}
-            url={url}
-            frameContext={fallbackFrameContext}
-          />
+          <FrameRender frameId={frameId} url={url} />
         </Providers>
       </div>
     </div>

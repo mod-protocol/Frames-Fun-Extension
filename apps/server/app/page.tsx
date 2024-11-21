@@ -1,5 +1,4 @@
 import FrameRender from "@/components/frame-render";
-import { fallbackFrameContext } from "@frames.js/render";
 import { Providers } from "./providers";
 import { FrameUrlInput } from "@/components/frame-url-input";
 import { ThemeContainer } from "./home-container";
@@ -24,7 +23,7 @@ export default async function Home({
             <div key={refreshKey || "x"} className="pt-8 w-full">
               <div className="rounded-md dark:bg-black">
                 <Providers>
-                  <FrameRender url={url} frameContext={fallbackFrameContext} />
+                  <FrameRender url={url} />
                 </Providers>
               </div>
             </div>

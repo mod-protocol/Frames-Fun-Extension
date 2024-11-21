@@ -13,6 +13,7 @@ export function sendMessageToEmbed(
   iframe: Window,
   message: MessagesFromServer
 ) {
+  console.log(message);
   iframe.postMessage(message, "*");
 }
 

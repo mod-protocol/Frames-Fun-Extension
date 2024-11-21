@@ -1,21 +1,4 @@
-import type {
-  FarcasterSigner as BaseFarcasterSigner,
-  FarcasterSignerApproved as BaseFarcasterSignerApproved,
-  FarcasterSignerPendingApproval as BaseFarcasterSignerPendingApproval,
-} from "@frames.js/render";
-
-export type UserID = `${string}-${string}-${string}-${string}-${string}`;
-
-type FarcasterSignerApproved = BaseFarcasterSignerApproved & { uid: UserID };
-
-type FarcasterSignerPendingApproval = BaseFarcasterSignerPendingApproval & {
-  uid: UserID;
-};
-
-export type FarcasterSigner =
-  | Exclude<BaseFarcasterSigner, { status: "approved" | "pending_approval" }>
-  | FarcasterSignerApproved
-  | FarcasterSignerPendingApproval;
+import type { FarcasterSigner } from "@frames.js/render/identity/farcaster";
 
 type MessageToServerFrameRendered = {
   type: "frame_rendered";
@@ -50,7 +33,7 @@ export type MessagesToExtension =
 
 type MessageFromServerSignerSignedIn = {
   type: "signed_in";
-  signer: FarcasterSignerApproved;
+  signer: Extract<FarcasterSigner, { status: "approved" }>;
 };
 
 type MessageFromServerSignerSignedOut = {

@@ -59,42 +59,45 @@ const AUTO_CLOSE_TIMEOUT_SECONDS = 10
 const AuthModal: React.FC<PlasmoCSUIProps> = () => {
   const [shown, setShown] = useState(false)
 
-  const { hasSigner, signer, logout } = useFarcasterIdentity({
+  const { signer, logout } = useFarcasterIdentity({
     enablePolling: true
   })
 
-  const loggedIn = hasSigner
   const pendingApproval = signer?.status === "pending_approval"
 
   useEffect(() => {
     let timeout: NodeJS.Timeout | undefined
-    if (!pendingApproval && loggedIn && shown) {
+
+    if (signer?.status === "approved" && shown) {
       timeout = setTimeout(
         () => setShown(false),
         AUTO_CLOSE_TIMEOUT_SECONDS * 1000
       )
     } else {
-      setShown(!!pendingApproval)
+      setShown(signer?.status === "pending_approval")
     }
+
     return () => {
       if (timeout) {
         clearTimeout(timeout)
       }
     }
-  }, [pendingApproval, loggedIn, shown])
+  }, [pendingApproval, signer?.status, shown])
 
   const handleClose = () => {
-    // do not logout from this modal
-    if (!loggedIn) {
+    // remove the identity if it is not approved
+    // this cleans up the pending approval state
+    if (signer?.status !== "approved") {
       logout?.()
     }
+
     setShown(false)
   }
 
   return (
     <AuthModalContainer onClick={handleClose} shown={shown}>
       <div className="relative p-8 flex flex-col justify-between items-center bg-white rounded-md text-violet-950 text-base min-w-72 gap-5">
-        {loggedIn ? (
+        {signer?.status === "approved" ? (
           <div className="flex flex-col gap-2 max-w-72 text-center items-center">
             <div className="text-xl font-semibold">Logged in succesfully!</div>
             <div className="text-lg">
