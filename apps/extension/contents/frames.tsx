@@ -159,6 +159,7 @@ export const render: PlasmoRender<any> = async (
   )
 
   const frame = await fetchFrame(frameUrl)
+  console.log({ frame })
   if (!isValidFrame(frame)) {
     return
   }

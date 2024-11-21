@@ -1,40 +1,35 @@
 import type { PlasmoMessaging } from "@plasmohq/messaging"
 
-const DEV_USER = process.env.PLASMO_PUBLIC_DEV_USER
-const isDevelopment = process.env.NODE_ENV === "development"
+export type FetchResponse =
+  | {
+      error: string
+    }
+  | {
+      status: number
+      headers: Record<string, string>
+      body: string
+    }
 
-const handler: PlasmoMessaging.MessageHandler = async (req, res) => {
-  // fake login for development
-  if (isDevelopment && DEV_USER) {
-    if (
-      req.body.url.startsWith(
-        "https://api.warpcast.com/v2/signed-key-request?token="
-      ) &&
-      req.body.options.method === "GET"
-    ) {
-      const result = JSON.parse(DEV_USER)
-      return res.send({
-        json: { result },
-        status: 200
-      })
-    }
-  }
+const handler: PlasmoMessaging.MessageHandler<
+  { url: string; options: RequestInit },
+  FetchResponse
+> = async (req, res) => {
   try {
-    const resp = await fetch(req.body.url, req.body.options)
-    if (!resp.ok) {
-      return res.send({ status: resp.status, error: resp.statusText })
+    if (!req.body) {
+      throw new Error("Request body is missing")
     }
-    const text = await resp.text()
-    let json
-    try {
-      json = JSON.parse(text)
-    } catch (e) {
-      // ignore
-    }
-    return res.send({ json, text, status: resp.status })
+
+    const response = await fetch(req.body.url, req.body.options)
+    const body = await response.text()
+
+    return res.send({
+      status: response.status,
+      headers: Object.fromEntries(response.headers),
+      body
+    })
   } catch (e) {
     console.error(e)
-    return res.send({ error: (e as any).message })
+    return res.send({ error: e instanceof Error ? e.message : String(e) })
   }
 }
 

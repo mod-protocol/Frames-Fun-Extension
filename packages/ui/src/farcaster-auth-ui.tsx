@@ -1,28 +1,12 @@
+import type { FarcasterSignerPendingApproval } from "@frames.js/render";
 import QRCode from "qrcode.react";
 
-type Signer =
-  | {
-      status: string;
-      signerApprovalUrl?: string;
-    }
-  | undefined
-  | null;
 export type FarcasterAuthUIProps = {
-  authState?: {
-    signer?: Signer;
-    logout?: () => void;
-  };
+  signer: FarcasterSignerPendingApproval;
+  logout: () => void;
 };
 
-export const FarcasterAuthUI = ({ authState }: FarcasterAuthUIProps) => {
-  if (
-    !(
-      authState?.signer?.status === "pending_approval" &&
-      authState?.signer?.signerApprovalUrl
-    )
-  ) {
-    return null;
-  }
+export const FarcasterAuthUI = ({ signer, logout }: FarcasterAuthUIProps) => {
   return (
     <div className="w-full flex flex-col gap-4 text-center">
       <div className="flex flex-row w-full gap-3 justify-between items-start">
@@ -32,7 +16,7 @@ export const FarcasterAuthUI = ({ authState }: FarcasterAuthUIProps) => {
         <div className="py-1">
           <button
             className="text-violet-950/50 hover:text-violet-950/40 active:text-violet-950/25 transition ease-in-out duration-150"
-            onClick={() => authState.logout?.()}
+            onClick={() => logout()}
           >
             <svg
               className="w-6 h-6"
@@ -59,7 +43,7 @@ export const FarcasterAuthUI = ({ authState }: FarcasterAuthUIProps) => {
             Scan with your phone camera
           </div>
           <div className="aspect-square w-full bg-white border border-violet-950/10 rounded flex items-center justify-center">
-            <QRCode value={authState.signer?.signerApprovalUrl} size={192} />
+            <QRCode value={signer.signerApprovalUrl} size={192} />
           </div>
         </div>
         <div className="flex flex-row w-full gap-2 items-center">
@@ -69,7 +53,7 @@ export const FarcasterAuthUI = ({ authState }: FarcasterAuthUIProps) => {
         </div>
         <div className="w-full text-center">
           <a
-            href={authState.signer?.signerApprovalUrl}
+            href={signer.signerApprovalUrl}
             target="_blank"
             className="text-md font-semibold hover:underline text-violet-950 hover:text-violet-950/75 active:text-violet-950/50"
             rel="noopener noreferrer"

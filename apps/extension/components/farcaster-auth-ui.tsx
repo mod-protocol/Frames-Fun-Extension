@@ -1,13 +1,16 @@
-import type { FarcasterSigner } from "@xframes/shared/types"
+import type {
+  FarcasterSignerImpersonating,
+  FarcasterSignerPendingApproval
+} from "@frames.js/render"
 import QRCode from "qrcode.react"
 
 export type FarcasterAuthUIProps = {
-  signer?: FarcasterSigner | null
+  signer?: FarcasterSignerPendingApproval | FarcasterSignerImpersonating | null
   logout?: () => void
 }
 
 export const FarcasterAuthUI = ({ signer, logout }: FarcasterAuthUIProps) => {
-  if (signer?.status !== "pending_approval") {
+  if (!signer || signer.status !== "pending_approval") {
     return null
   }
 
@@ -43,7 +46,7 @@ export const FarcasterAuthUI = ({ signer, logout }: FarcasterAuthUIProps) => {
             Scan with your phone camera
           </div>
           <div className="aspect-square w-full bg-white border border-violet-950/10 rounded flex items-center justify-center">
-            <QRCode value={signer?.signerApprovalUrl} size={192} />
+            <QRCode value={signer.signerApprovalUrl} size={192} />
           </div>
         </div>
         <div className="flex flex-row w-full gap-2 items-center">
@@ -53,7 +56,7 @@ export const FarcasterAuthUI = ({ signer, logout }: FarcasterAuthUIProps) => {
         </div>
         <div className="w-full text-center">
           <a
-            href={signer?.signerApprovalUrl}
+            href={signer.signerApprovalUrl}
             target="_blank"
             className="text-md font-semibold hover:underline text-violet-950 hover:text-violet-950/75 active:text-violet-950/50"
             rel="noopener noreferrer">

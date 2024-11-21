@@ -1,30 +1,27 @@
 import { sendToBackground } from "@plasmohq/messaging"
 
-export interface JsonExtractor<T> {
-  json: () => Promise<T>
-  status: number
-}
-
-export const fetchJson = async <T>(
-  url: string,
-  options: RequestInit = {}
-): Promise<JsonExtractor<T>> => {
+export const fetchJson: typeof fetch = async (url, options) => {
   const { error, json, status } = await sendToBackground({
     name: "fetch",
     body: {
-      url,
+      url: url.toString(),
       options: {
         method: "GET",
         ...options,
         headers: {
           "Content-Type": "application/json",
-          ...options.headers
+          ...options?.headers
         }
       }
     }
   })
+
   if (error) {
     throw new Error(error)
   }
-  return { json: () => json, status }
+
+  // @todo test if this works
+  return new Response(JSON.stringify(json), {
+    status
+  })
 }

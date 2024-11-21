@@ -2,25 +2,15 @@
 
 import { sendMessageToExtension } from "@xframes/shared/messaging";
 import { usePostHog } from "posthog-js/react";
-import type { Frame } from "frames.js";
 import { FarcasterAuthUI } from "@xframes/ui/farcaster-auth-ui";
 import { useFarcasterIdentity } from "../hooks/use-farcaster-identity";
 import {
-  FarcasterFrameContext,
-  FarcasterSigner,
-  FarcasterSignerState,
-  FrameActionBodyPayload,
-  FrameState,
+  fallbackFrameContext,
   OnMintArgs,
   OnTransactionArgs,
   OnTransactionFunc,
 } from "@frames.js/render";
-import {
-  AnonymousSignerState,
-  useAnonymousIdentity,
-} from "../hooks/use-anonymous-identity";
-import { useFrame } from "@frames.js/render/use-frame";
-// import { FrameImageNext } from "@frames.js/render/next";
+import { useAnonymousIdentity } from "@frames.js/render/identity/anonymous";
 import { useMeasure } from "@uidotdev/usehooks";
 import { useCallback, useEffect } from "react";
 import { useAccount, useChainId, useConfig } from "wagmi";
@@ -33,14 +23,22 @@ import { FrameUI, type OnButtonPressFn } from "./frame-ui";
 import { Toast, useToast } from "./toast";
 import { useWalletModalMeasure } from "./use-wallet-modal-measure";
 import { encodePacked, hexToBytes } from "viem";
+import {
+  useFrame_unstable as useFrame,
+  UnstableUseFrameReturnValue,
+} from "@frames.js/render/unstable-use-frame";
+import { isPartialFrame } from "@frames.js/render/helpers";
+import { FarcasterSignerInstance } from "@frames.js/render/identity/farcaster";
 
 type FrameRenderProps = {
+  /**
+   * If frame id is provided then the frame is rendered as part of the page
+   */
   frameId?: string;
+  /**
+   * URL of the frame
+   */
   url: string;
-  frame?: Frame;
-  theme?: "light" | "dark";
-  dangerousSkipSigning?: boolean;
-  frameContext: FarcasterFrameContext;
 };
 
 export const MODAL_PADDING = 50;
@@ -49,7 +47,7 @@ function FrameComponent({
   state,
   frameId,
 }: {
-  state: FrameState;
+  state: UnstableUseFrameReturnValue;
   frameId?: string;
 }) {
   const posthog = usePostHog();
@@ -136,35 +134,27 @@ function FrameComponent({
 }
 
 interface FrameRenderComponentProps {
-  frameState: FrameState;
-  signerState: FarcasterSignerState | AnonymousSignerState;
+  frameState: UnstableUseFrameReturnValue;
   frameId?: string;
-}
-
-function isFarcasterSignerState(
-  signerState: unknown
-): signerState is FarcasterSignerState {
-  return (
-    typeof signerState === "object" &&
-    signerState !== null &&
-    "signer" in signerState &&
-    "hasSigner" in signerState
-  );
+  farcasterSigner: FarcasterSignerInstance | null;
 }
 
 function FrameRenderComponent({
   frameState,
-  signerState,
   frameId,
+  farcasterSigner,
 }: FrameRenderComponentProps) {
   return (
     <div className="relative">
       <FrameComponent state={frameState} frameId={frameId} />
-      {isFarcasterSignerState(signerState) &&
-        signerState?.signer?.status === "pending_approval" && (
+      {!!farcasterSigner &&
+        farcasterSigner.signer?.status === "pending_approval" && (
           <div className="absolute top-0 left-0 bottom-0 right-0 flex items-center justify-center">
             <div className="max-w-72 bg-white px-4 py-6 rounded-md shadow-xl backdrop-blur-sm">
-              <FarcasterAuthUI authState={signerState} />
+              <FarcasterAuthUI
+                signer={farcasterSigner.signer}
+                logout={farcasterSigner.logout}
+              />
             </div>
           </div>
         )}
@@ -172,87 +162,153 @@ function FrameRenderComponent({
   );
 }
 
-interface FrameRenderWithIdentityProps extends FrameRenderProps {
+type FrameRenderedInIframeProps = Omit<FrameRenderProps, "frameId"> & {
+  frameId: string;
   connectedAddress: `0x${string}` | undefined;
   onTransaction: OnTransactionFunc;
   onMint: (t: OnMintArgs) => void;
-}
+};
 
 const useFrameDefaults = {
   frameGetProxy: "/api/v1/frames",
   frameActionProxy: "/api/v1/frames",
-  specification: "farcaster" as const,
 };
 
-function useAnonymousFrame(props: FrameRenderWithIdentityProps) {
-  // TODO: find a way to do this without loading the frame twice
-  const anonymousSignerState = useAnonymousIdentity();
-  const anonymousFrameState = useFrame<{}, FrameActionBodyPayload>({
-    ...useFrameDefaults,
-    ...props,
-    homeframeUrl: props.url,
-    signerState: anonymousSignerState,
-    specification: "openframes",
-  });
-
-  const currentFrame =
-    anonymousFrameState.currentFrameStackItem?.status === "done"
-      ? anonymousFrameState.currentFrameStackItem.frameResult
-      : null;
-
-  const isFrameAnonymous =
-    currentFrame?.frame.accepts?.some((a) => a.id === "anonymous") || false;
-
-  return {
-    anonymousFrameState,
-    anonymousSignerState,
-    isFrameAnonymous,
-  };
-}
-
-function FrameRenderWithRemoteIdentity({
+/**
+ * Frame rendered in iframe
+ */
+function FrameRenderedInIframe({
   frameId,
-  ...props
-}: FrameRenderWithIdentityProps) {
-  const signerState = useFarcasterIdentityRemote({ frameId: frameId! });
-  const frameState = useFrame<FarcasterSigner | null, FrameActionBodyPayload>({
+  connectedAddress,
+  url,
+  onMint,
+  onTransaction,
+}: FrameRenderedInIframeProps) {
+  const farcasterSigner = useFarcasterIdentityRemote({ frameId });
+  const anonymousSigner = useAnonymousIdentity();
+  const frameState = useFrame({
     ...useFrameDefaults,
-    ...props,
-    homeframeUrl: props.url,
-    signerState,
+    homeframeUrl: url,
+    async resolveAddress() {
+      return connectedAddress ?? null;
+    },
+    resolveSigner({ parseResult }) {
+      // prefer farcaster signer if signer is approved
+      if (farcasterSigner.signer?.status === "approved") {
+        if (
+          parseResult.farcaster.status === "success" ||
+          isPartialFrame(parseResult.farcaster)
+        ) {
+          return farcasterSigner.withContext(fallbackFrameContext);
+        }
+      }
+
+      // prefer farcaster and valid frame
+      if (parseResult.farcaster.status === "success") {
+        return farcasterSigner.withContext(fallbackFrameContext);
+      }
+
+      if (parseResult.openframes.status === "success") {
+        return anonymousSigner.withContext(fallbackFrameContext);
+      }
+
+      // prefer partial farcaster frame
+      if (isPartialFrame(parseResult.farcaster)) {
+        return farcasterSigner.withContext(fallbackFrameContext);
+      }
+
+      if (isPartialFrame(parseResult.openframes)) {
+        return anonymousSigner.withContext({});
+      }
+
+      // prefer farcaster
+      return farcasterSigner.withContext(fallbackFrameContext);
+    },
+    onMint,
+    onTransaction,
   });
-  const { isFrameAnonymous, anonymousFrameState, anonymousSignerState } =
-    useAnonymousFrame(props);
 
   return (
     <FrameRenderComponent
-      frameState={isFrameAnonymous ? anonymousFrameState : frameState}
-      signerState={isFrameAnonymous ? anonymousSignerState : signerState}
+      frameState={frameState}
+      farcasterSigner={
+        frameState.signerState?.specification === "farcaster"
+          ? farcasterSigner
+          : null
+      }
       frameId={frameId}
     />
   );
 }
 
-function FrameRenderWithLocalIdentity(props: FrameRenderWithIdentityProps) {
-  const signerState = useFarcasterIdentity();
-  const frameState = useFrame<FarcasterSigner | null, FrameActionBodyPayload>({
+type FrameRenderedOnPageProps = Omit<FrameRenderProps, "frameId"> & {
+  connectedAddress: `0x${string}` | undefined;
+  onTransaction: OnTransactionFunc;
+  onMint: (t: OnMintArgs) => void;
+};
+
+/**
+ * Frame rendered as part of the page
+ */
+function FrameRenderedOnPage({
+  connectedAddress,
+  url,
+}: FrameRenderedOnPageProps) {
+  const farcasterSigner = useFarcasterIdentity();
+  const anonymousSigner = useAnonymousIdentity();
+  const frameState = useFrame({
     ...useFrameDefaults,
-    ...props,
-    homeframeUrl: props.url,
-    signerState,
+    homeframeUrl: url,
+    async resolveAddress() {
+      return connectedAddress ?? null;
+    },
+    resolveSigner({ parseResult }) {
+      // prefer farcaster signer if signer is approved
+      if (farcasterSigner.signer?.status === "approved") {
+        if (
+          parseResult.farcaster.status === "success" ||
+          isPartialFrame(parseResult.farcaster)
+        ) {
+          return farcasterSigner.withContext(fallbackFrameContext);
+        }
+      }
+
+      // prefer farcaster and valid frame
+      if (parseResult.farcaster.status === "success") {
+        return farcasterSigner.withContext(fallbackFrameContext);
+      }
+
+      if (parseResult.openframes.status === "success") {
+        return anonymousSigner.withContext({});
+      }
+
+      // prefer partial farcaster frame
+      if (isPartialFrame(parseResult.farcaster)) {
+        return farcasterSigner.withContext(fallbackFrameContext);
+      }
+
+      if (isPartialFrame(parseResult.openframes)) {
+        return anonymousSigner.withContext({});
+      }
+
+      // prefer farcaster
+      return farcasterSigner.withContext(fallbackFrameContext);
+    },
   });
-  const { isFrameAnonymous, anonymousFrameState, anonymousSignerState } =
-    useAnonymousFrame(props);
 
   return (
     <FrameRenderComponent
-      frameState={isFrameAnonymous ? anonymousFrameState : frameState}
-      signerState={isFrameAnonymous ? anonymousSignerState : signerState}
+      frameState={frameState}
+      farcasterSigner={
+        frameState.signerState?.specification === "farcaster"
+          ? farcasterSigner
+          : null
+      }
     />
   );
 }
 
-export default function FrameRender(props: FrameRenderProps) {
+export default function FrameRender({ frameId, url }: FrameRenderProps) {
   const currentChainId = useChainId();
   const config = useConfig();
   const account = useAccount();
@@ -353,24 +409,24 @@ export default function FrameRender(props: FrameRenderProps) {
     [onTransaction, account.address, openConnectModal]
   );
 
-  const componentProps = {
-    ...props,
-    onTransaction,
-    onMint,
-    frameContext: {
-      ...props.frameContext,
-      address: account.address || props.frameContext.address,
-    },
-    connectedAddress: account.address,
-  };
-
-  const Component = props.frameId
-    ? FrameRenderWithRemoteIdentity
-    : FrameRenderWithLocalIdentity;
-
   return (
     <div className="relative">
-      <Component {...componentProps} />
+      {frameId ? (
+        <FrameRenderedInIframe
+          connectedAddress={account.address}
+          onMint={onMint}
+          onTransaction={onTransaction}
+          frameId={frameId}
+          url={url}
+        />
+      ) : (
+        <FrameRenderedOnPage
+          connectedAddress={account.address}
+          onMint={onMint}
+          onTransaction={onTransaction}
+          url={url}
+        />
+      )}
       <div className="absolute bottom-0 left-0 right-0 flex items-center justify-center">
         <Toast toast={toast} />
       </div>

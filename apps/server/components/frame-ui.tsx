@@ -1,8 +1,8 @@
-import type { FrameState } from "@frames.js/render";
 import type { Frame, FrameButton } from "frames.js";
 import React, { ImgHTMLAttributes, useEffect, useState } from "react";
 import { MessageSquareIcon, OctagonXIcon, TxIcon } from "./icons";
 import { LoadingIndicator } from "./loading-indicator";
+import { UnstableUseFrameReturnValue } from "@frames.js/render/unstable-use-frame";
 
 type OnButtonPressFnParams = {
   button: FrameButton;
@@ -19,7 +19,7 @@ type OnButtonPressFnParams = {
 export type OnButtonPressFn = (params: OnButtonPressFnParams) => void;
 
 export type FrameUIProps = {
-  frameState: FrameState;
+  frameState: UnstableUseFrameReturnValue;
   FrameImage?: React.FC<ImgHTMLAttributes<HTMLImageElement> & { src: string }>;
   onReset?: () => void;
   onButtonPress?: OnButtonPressFn;
@@ -204,7 +204,7 @@ function FrameUIError({
   );
 }
 
-function isPartial(frame: Partial<Frame>): boolean {
+export function isPartial(frame: Partial<Frame>): boolean {
   return !!(frame?.image || frame?.ogImage || frame?.buttons);
 }
 

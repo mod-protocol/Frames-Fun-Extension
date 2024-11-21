@@ -6,11 +6,12 @@
     "dev": "rimraf .next && next dev",
     "build": "next build",
     "start": "next start",
-    "lint": "next lint"
+    "lint": "next lint",
+    "typecheck": "tsc --noEmit"
   },
   "dependencies": {
     "@farcaster/hub-nodejs": "^0.12.7",
-    "@frames.js/render": "^0.2.16",
+    "@frames.js/render": "^0.4.2",
     "@noble/ed25519": "^2.0.0",
     "@rainbow-me/rainbowkit": "^2.1.0",
     "@reservoir0x/reservoir-sdk": "^2.2.3",
@@ -21,7 +22,7 @@
     "@xframes/shared": "workspace:*",
     "@xframes/ui": "workspace:*",
     "ffun-trpc-types": "file:ffun-trpc-types-0.1.0.tgz",
-    "frames.js": "^0.16.5",
+    "frames.js": "^0.20.0",
     "next": "14.1.4",
     "posthog-js": "^1.144.1",
     "react": "^18.2.0",

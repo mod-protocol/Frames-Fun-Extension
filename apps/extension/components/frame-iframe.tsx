@@ -47,7 +47,7 @@ export default function FrameIFrame({ url, frameId, theme }: FrameIFrameProps) {
     })
   }, [frameId])
 
-  useEffect(() => {
+  /*useEffect(() => {
     if (signer?.status !== "approved") {
       return
     }
@@ -59,9 +59,9 @@ export default function FrameIFrame({ url, frameId, theme }: FrameIFrameProps) {
         signer.publicKey
       )
     })
-  }, [signer])
+  }, [signer])*/
 
-  useEffect(() => {
+  /*useEffect(() => {
     const iframe = iframeRef.current?.contentWindow
     if (!iframe) {
       return
@@ -69,9 +69,9 @@ export default function FrameIFrame({ url, frameId, theme }: FrameIFrameProps) {
     // TODO set origin
     // signer === null - not loaded yet
     // signer === undefined - loaded and "empty"
-    if (signer === undefined) {
+    if (!signer) {
       sendMessageToEmbed(iframe, { type: "signed_out" })
-    } else if (signer?.status === "approved") {
+    } else if (signer.status === "approved") {
       sendMessageToEmbed(iframe, { type: "signed_in", signer })
     }
   }, [signer, iframeRef])
@@ -86,7 +86,7 @@ export default function FrameIFrame({ url, frameId, theme }: FrameIFrameProps) {
     return createMessageConsumer("embed_sign_out", () => {
       logout?.()
     })
-  }, [logout])
+  }, [logout])*/
 
   const handleLoad = useCallback(() => {
     setLoading(false)
